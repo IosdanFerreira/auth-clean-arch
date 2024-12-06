@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "@src/*": ["src/*"], // Exemplo de mapeamento
+      "@src/*": ["src/*"],
       "@modules/*": ["src/modules/*"]
     },
     "resolveJsonModule": true,
