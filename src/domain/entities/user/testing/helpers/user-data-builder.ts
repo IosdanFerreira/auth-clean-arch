@@ -7,7 +7,6 @@ type Props = {
   email?: string;
   password?: string;
   createdAt?: Date;
-  updatedAt?: Date;
 };
 
 /**
@@ -24,6 +23,5 @@ export function UserDataBuilder(props: Props): UserEntityProps {
     email: props.email ?? faker.internet.email(),
     password: props.password ?? faker.internet.password(),
     createdAt: props.createdAt ?? new Date(),
-    updatedAt: props.updatedAt ?? new Date(),
   };
 }

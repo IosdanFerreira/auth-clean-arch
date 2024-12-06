@@ -6,7 +6,6 @@ export type UserEntityProps = {
   email: string;
   password: string;
   createdAt?: Date;
-  updatedAt?: Date;
 };
 
 /**
@@ -29,9 +28,24 @@ export class UserEntity extends Entity<UserEntityProps> {
 
     // Garante que a data de criação seja definida se não fornecida.
     this.props.createdAt = this.props.createdAt ?? new Date();
+  }
 
-    // Garante que a data de atualização seja definida se não fornecida.
-    this.props.updatedAt = this.props.updatedAt ?? new Date();
+  /**
+   * Atualiza o nome do objeto.
+   *
+   * @param newName - O novo nome a ser atribuído ao objeto.
+   */
+  update(newName: string): void {
+    this.name = newName;
+  }
+
+  /**
+   * Atualiza a senha do objeto.
+   *
+   * @param newPassword - A nova senha a ser atribuída ao objeto.
+   */
+  updatePassword(newPassword: string): void {
+    this.password = newPassword;
   }
 
   /**
@@ -50,7 +64,6 @@ export class UserEntity extends Entity<UserEntityProps> {
    */
   private set name(newName: string) {
     this.props.name = newName;
-    this.updateTimestamp();
   }
 
   /**
@@ -77,7 +90,6 @@ export class UserEntity extends Entity<UserEntityProps> {
    */
   private set password(newPassword: string) {
     this.props.password = newPassword;
-    this.updateTimestamp();
   }
 
   /**
@@ -86,21 +98,5 @@ export class UserEntity extends Entity<UserEntityProps> {
    */
   get createdAt(): Date {
     return this.props.createdAt;
-  }
-
-  /**
-   * Getter para a data de atualização do usuário.
-   * Retorna a data de atualização do usuário.
-   */
-  get updatedAt(): Date {
-    return this.props.updatedAt;
-  }
-
-  /**
-   * Atualiza o timestamp da propriedade `updatedAt` para o momento atual.
-   * Este método é usado internamente pelos setters para registrar alterações.
-   */
-  private updateTimestamp() {
-    this.props.updatedAt = new Date();
   }
 }
