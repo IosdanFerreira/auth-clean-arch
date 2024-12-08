@@ -1,4 +1,6 @@
+import { UserValidatorFactory } from '@src/domain/entities/user/validators/user.validator';
 import { Entity } from '@src/shared/domain/entities/entity';
+import { EntityValidationError } from '@src/shared/domain/validators/errors/validation-error';
 
 // Tipo que define as propriedades de um usuário.
 export type UserEntityProps = {
@@ -23,6 +25,9 @@ export class UserEntity extends Entity<UserEntityProps> {
     public readonly props: UserEntityProps,
     id?: string,
   ) {
+    // Método interno da classe que valida os dados da entidade User
+    UserEntity.validate(props);
+
     // Chama o construtor da classe pai (`Entity`) para inicializar as propriedades e o ID.
     super(props, id);
 
@@ -36,6 +41,7 @@ export class UserEntity extends Entity<UserEntityProps> {
    * @param newName - O novo nome a ser atribuído ao objeto.
    */
   update(newName: string): void {
+    UserEntity.validate({ ...this.props, name: newName });
     this.name = newName;
   }
 
@@ -45,6 +51,7 @@ export class UserEntity extends Entity<UserEntityProps> {
    * @param newPassword - A nova senha a ser atribuída ao objeto.
    */
   updatePassword(newPassword: string): void {
+    UserEntity.validate({ ...this.props, password: newPassword });
     this.password = newPassword;
   }
 
@@ -98,5 +105,15 @@ export class UserEntity extends Entity<UserEntityProps> {
    */
   get createdAt(): Date {
     return this.props.createdAt;
+  }
+
+  static validate(props: UserEntityProps) {
+    const validator = UserValidatorFactory.create();
+
+    const isValid = validator.validate(props);
+
+    if (!isValid) {
+      throw new EntityValidationError(validator.errors);
+    }
   }
 }

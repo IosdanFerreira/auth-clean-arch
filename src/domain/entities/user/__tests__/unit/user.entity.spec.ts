@@ -9,6 +9,7 @@ describe('UserEntity unit tests', () => {
   let userEntityProps: UserEntityProps;
 
   beforeEach(() => {
+    UserEntity.validate = jest.fn();
     // user props
     userEntityProps = UserDataBuilder({});
 
@@ -17,6 +18,7 @@ describe('UserEntity unit tests', () => {
   });
 
   it('should test the constructor method of UserEntity', () => {
+    expect(UserEntity.validate).toHaveBeenCalled();
     expect(sut).toBeInstanceOf(UserEntity);
     expect(sut.props.name).toEqual(userEntityProps.name);
     expect(sut.props.email).toEqual(userEntityProps.email);
