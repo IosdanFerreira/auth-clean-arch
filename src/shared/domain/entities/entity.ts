@@ -31,7 +31,7 @@ export abstract class Entity<Props = any> {
    * Retorna o ID único da entidade.
    */
   get id() {
-    return this.id;
+    return this._id;
   }
 
   /**

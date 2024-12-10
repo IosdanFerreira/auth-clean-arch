@@ -1,4 +1,4 @@
-import { FieldsErrors } from '../validator-fields.interface';
+import { FieldsErrors } from '../validators/validator-fields.interface';
 
 /**
  * Classe base para representar erros de validação.

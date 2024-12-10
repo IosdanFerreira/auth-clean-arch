@@ -1,6 +1,6 @@
 import { UserValidatorFactory } from '@src/domain/entities/user/validators/user.validator';
 import { Entity } from '@src/shared/domain/entities/entity';
-import { EntityValidationError } from '@src/shared/domain/validators/errors/validation-error';
+import { EntityValidationError } from '@src/shared/domain/errors/validation-error';
 
 // Tipo que define as propriedades de um usuário.
 export type UserEntityProps = {
