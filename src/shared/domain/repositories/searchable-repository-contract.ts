@@ -8,20 +8,32 @@ export type SortDirection = 'asc' | 'desc';
 export type SearchProps<Filter = string> = {
   page?: number;
   perPage?: number;
+  lastPage?: number;
   sort?: string | null;
   sortDir?: SortDirection | null;
   filter?: Filter | null;
 };
 
+// Define as propriedades aceitas ao realizar uma pesquisa. Inclui paginação, ordenação e filtro.
+export type SearchResultProps<T extends Entity, Filter> = {
+  items: T[];
+  totalItems: number;
+  currentPage: number;
+  perPage: number;
+  sort: string | null;
+  sortDir: string | null;
+  filter: Filter | null;
+};
+
 // Classe responsável por encapsular os parâmetros de pesquisa e fornecer validação e comportamento padrão.
-export class SearchParams {
+export class SearchParams<Filter = string> {
   protected _page: number;
   protected _perPage = 15;
   protected _sort: string | null;
   protected _sortDir: SortDirection | null;
-  protected _filter: string | null;
+  protected _filter: Filter | null;
 
-  constructor(props: SearchProps = {}) {
+  constructor(props: SearchProps<Filter> = {}) {
     this.page = props.page;
     this.perPage = props.perPage;
     this.sort = props.sort;
@@ -94,23 +106,61 @@ export class SearchParams {
   }
 
   // Getter para o filtro.
-  get filter() {
+  get filter(): Filter | null {
     return this._filter;
   }
 
   // Setter privado que valida e define o filtro.
-  private set filter(value: string | null) {
+  private set filter(value: Filter | null) {
     this._filter =
-      value === null || value === undefined || value === '' ? null : `${value}`;
+      value === null || value === undefined || value === ''
+        ? null
+        : (`${value}` as any);
+  }
+}
+
+export class SearchResult<T extends Entity, Filter = string> {
+  readonly items: T[];
+  readonly totalItems: number;
+  readonly currentPage: number;
+  readonly perPage: number;
+  readonly lastPage: number;
+  readonly sort: string | null;
+  readonly sortDir: string | null;
+  readonly filter: Filter | null;
+
+  constructor(props: SearchResultProps<T, Filter>) {
+    this.items = props.items;
+    this.totalItems = props.totalItems;
+    this.currentPage = props.currentPage;
+    this.perPage = props.perPage;
+    this.lastPage = Math.ceil(this.totalItems / this.perPage);
+    this.sort = props.sort ?? null;
+    this.sortDir = props.sortDir ?? null;
+    this.filter = props.filter ?? null;
+  }
+
+  toJSON(forceEntity = false) {
+    return {
+      items: forceEntity ? this.items.map((item) => item.toJson()) : this.items,
+      totalItems: this.totalItems,
+      currentPage: this.currentPage,
+      perPage: this.perPage,
+      lastPage: this.lastPage,
+      sort: this.sort,
+      sortDir: this.sortDir,
+      filter: this.filter,
+    };
   }
 }
 
 // Interface que define os métodos necessários para repositórios que suportam pesquisa avançada.
 export interface SearchableRepositoryInterface<
   T extends Entity,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  SearchInput,
-  SearchOutput,
+  Filter = string,
+  SearchInput = SearchParams<Filter>,
+  SearchOutput = SearchResult<T, Filter>,
 > extends RepositoryInterface<T> {
-  search(props: SearchParams): Promise<SearchOutput>;
+  sortableFields: string[];
+  search(props: SearchInput): Promise<SearchOutput>;
 }
