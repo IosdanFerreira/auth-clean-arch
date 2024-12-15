@@ -23,6 +23,7 @@ export class UserInMemoryRepository
     return foundedUser;
   }
 
+  // Checa se o email existe na base de dados, se existir, não deve criar um novo usuário com o mesmo email
   async emailExist(email: string): Promise<void> {
     const foundedUser = this.items.find((user) => user.email === email);
 
