@@ -16,23 +16,54 @@ describe('Signup unit tests', () => {
     hashProvider = new BcryptjsHashProvider();
     sut = new Signup(repository, hashProvider);
   });
+  it('Should throw error when email not provider', async () => {
+    const input = {
+      name: 'test1',
+      email: '',
+      password: '12345678',
+    };
 
-  it('Should register a new user', async () => {
-    const input = UserDataBuilder({});
+    expect(sut.execute(input)).rejects.toThrow(
+      new BadRequestError('Params not provider'),
+    );
+  });
 
-    const spyInsert = jest.spyOn(repository, 'insert');
+  it('Should throe error when password not provider', async () => {
+    const input = {
+      name: 'test1',
+      email: 'test1@gmail.com',
+      password: '',
+    };
 
-    const output = await sut.execute(input);
+    expect(sut.execute(input)).rejects.toThrow(
+      new BadRequestError('Params not provider'),
+    );
+  });
 
-    expect(spyInsert).toHaveBeenCalled();
-    expect(output.id).toBeDefined();
-    expect(output.createdAt).toBeInstanceOf(Date);
+  it('Should throe error when name not provider', async () => {
+    const input = {
+      name: '',
+      email: 'test1@gmail.com',
+      password: '12345678',
+    };
+
+    expect(sut.execute(input)).rejects.toThrow(
+      new BadRequestError('Params not provider'),
+    );
   });
 
   it('Should not be able to register with same email twice', async () => {
-    const input = UserDataBuilder({});
+    const input = {
+      name: 'test1',
+      email: 'test1@gmail.com',
+      password: '12345678',
+    };
 
-    const input2 = UserDataBuilder({});
+    const input2 = {
+      name: 'test2',
+      email: 'test1@gmail.com',
+      password: '1234567822',
+    };
 
     await sut.execute(input);
 
@@ -41,27 +72,20 @@ describe('Signup unit tests', () => {
     );
   });
 
-  it('Should throe error when email not provider', async () => {
-    const input = UserDataBuilder({ email: '' });
+  it('Should register a new user', async () => {
+    const input = UserDataBuilder({});
 
-    expect(sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Params not provider'),
-    );
-  });
+    const emailExistSpy = jest.spyOn(repository, 'emailExist');
+    const generateHashSpy = jest.spyOn(hashProvider, 'generateHash');
+    const spyInsert = jest.spyOn(repository, 'insert');
 
-  it('Should throe error when password not provider', async () => {
-    const input = UserDataBuilder({ password: '' });
+    const output = await sut.execute(input);
 
-    expect(sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Params not provider'),
-    );
-  });
-
-  it('Should throe error when name not provider', async () => {
-    const input = UserDataBuilder({ name: '' });
-
-    expect(sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Params not provider'),
-    );
+    expect(emailExistSpy).toHaveBeenCalled();
+    expect(generateHashSpy).toHaveBeenCalled();
+    expect(spyInsert).toHaveBeenCalled();
+    expect(typeof output).toBe('object');
+    expect(output.id).toBeDefined();
+    expect(output.createdAt).toBeInstanceOf(Date);
   });
 });

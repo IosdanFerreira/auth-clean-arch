@@ -22,6 +22,5 @@ export interface UserRepository
     UserSearchResults
   > {
   findByEmail(email: string): Promise<UserEntity>;
-  findById(id: string): Promise<UserEntity>;
   emailExist(email: string): Promise<void>;
 }

@@ -15,32 +15,44 @@ describe('Update User unit tests', () => {
   });
 
   it('Should throw error when user not found by ID', async () => {
-    await expect(() =>
-      sut.execute({ id: 'wrong_id', name: 'test' }),
-    ).rejects.toThrow(new NotFoundError('Entity not found'));
+    const input = { id: 'wrong_id', name: 'test' };
+
+    await expect(() => sut.execute(input)).rejects.toThrow(
+      new NotFoundError('Entity not found'),
+    );
   });
 
   it('Should throw error when name param not provider', async () => {
-    const user = new UserEntity(UserDataBuilder({}));
+    const user = [new UserEntity(UserDataBuilder({}))];
+    repository.items = user;
 
-    await repository.insert(user);
+    const input = {
+      id: repository.items[0]._id,
+      name: '',
+    };
 
-    const userExist = await repository.findByID(user._id);
-
-    await expect(() =>
-      sut.execute({ id: userExist._id, name: '' }),
-    ).rejects.toThrow(new BadRequestError('Name not provided'));
+    await expect(() => sut.execute(input)).rejects.toThrow(
+      new BadRequestError('Name not provided'),
+    );
   });
 
   it('Should update user', async () => {
-    const user = new UserEntity(UserDataBuilder({}));
+    const findBySpy = jest.spyOn(repository, 'findByID');
+    const updateSpy = jest.spyOn(repository, 'update');
+    const items = [new UserEntity(UserDataBuilder({}))];
 
-    await repository.insert(user);
+    repository.items = items;
 
-    const userExist = await repository.findByID(user._id);
+    const input = {
+      id: repository.items[0]._id,
+      name: 'new name',
+    };
 
-    await sut.execute({ id: userExist._id, name: 'new name' });
+    const output = await sut.execute(input);
 
-    expect(userExist.name).toStrictEqual('new name');
+    expect(findBySpy).toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalled();
+    expect(repository.items[0].name).toStrictEqual('new name');
+    expect(typeof output).toBe('object');
   });
 });

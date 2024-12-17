@@ -5,7 +5,7 @@ import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
 export class UpdateUser {
   constructor(readonly userRepository: UserRepository) {}
 
-  async execute(input: SignupInput): Promise<SignupOutput> {
+  async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
     const user = await this.userRepository.findByID(input.id);
 
     if (!input.name) {
@@ -20,9 +20,9 @@ export class UpdateUser {
   }
 }
 
-export type SignupInput = {
+export type UpdateUserInput = {
   id: string;
   name: string;
 };
 
-export type SignupOutput = UserOutputDto;
+export type UpdateUserOutput = UserOutputDto;

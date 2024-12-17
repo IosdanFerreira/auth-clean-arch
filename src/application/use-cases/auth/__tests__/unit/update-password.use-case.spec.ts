@@ -18,55 +18,49 @@ describe('Update user password unit tests', () => {
   });
 
   it('Should throw error when new password not provided', async () => {
-    const createUserInput = new UserEntity(UserDataBuilder({}));
+    const items = [new UserEntity(UserDataBuilder({}))];
 
-    await repository.insert(createUserInput);
+    repository.items = items;
 
-    const user = await repository.findByID(createUserInput._id);
-
-    const updatePasswordInput = {
-      id: user._id,
+    const input = {
+      id: repository.items[0]._id,
       password: '',
-      oldPassword: user.password,
+      oldPassword: repository.items[0].password,
     };
 
-    await expect(() => sut.execute(updatePasswordInput)).rejects.toThrow(
+    await expect(() => sut.execute(input)).rejects.toThrow(
       new BadRequestError('Old password and new password is required'),
     );
   });
 
   it('Should throw error when old password not provided', async () => {
-    const createUserInput = new UserEntity(UserDataBuilder({}));
+    const items = [new UserEntity(UserDataBuilder({}))];
 
-    await repository.insert(createUserInput);
+    repository.items = items;
 
-    const user = await repository.findByID(createUserInput._id);
-
-    const updatePasswordInput = {
-      id: user._id,
+    const input = {
+      id: repository.items[0]._id,
       password: '12345678',
       oldPassword: '',
     };
 
-    await expect(() => sut.execute(updatePasswordInput)).rejects.toThrow(
+    await expect(() => sut.execute(input)).rejects.toThrow(
       new BadRequestError('Old password and new password is required'),
     );
   });
 
   it('Should throw error when old password and new password not provided', async () => {
-    const createUserInput = new UserEntity(UserDataBuilder({}));
+    const items = [new UserEntity(UserDataBuilder({}))];
 
-    await repository.insert(createUserInput);
+    repository.items = items;
 
-    const user = await repository.findByID(createUserInput._id);
-
-    const updatePasswordInput = {
-      id: user._id,
+    const input = {
+      id: repository.items[0]._id,
       password: '',
       oldPassword: '',
     };
 
-    await expect(() => sut.execute(updatePasswordInput)).rejects.toThrow(
+    await expect(() => sut.execute(input)).rejects.toThrow(
       new BadRequestError('Old password and new password is required'),
     );
   });
