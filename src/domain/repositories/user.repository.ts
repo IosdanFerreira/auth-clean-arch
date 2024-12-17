@@ -7,17 +7,21 @@ import {
 
 export type Filter = string;
 
-export class SearchParams extends DefaultSearchParams<Filter> {}
+export class UserSearchParams extends DefaultSearchParams<Filter> {}
 
-export class SearchResults extends DefaultSearchResult<UserEntity, Filter> {}
+export class UserSearchResults extends DefaultSearchResult<
+  UserEntity,
+  Filter
+> {}
 
 export interface UserRepository
   extends SearchableRepositoryInterface<
     UserEntity,
     Filter,
-    SearchParams,
-    SearchResults
+    UserSearchParams,
+    UserSearchResults
   > {
   findByEmail(email: string): Promise<UserEntity>;
+  findById(id: string): Promise<UserEntity>;
   emailExist(email: string): Promise<void>;
 }

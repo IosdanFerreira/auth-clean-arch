@@ -42,6 +42,29 @@ describe('UserInMemoryRepository unit tests', () => {
     await sut.emailExist('a@a.com');
   });
 
+  it('Should find a entity by ID', async () => {
+    const input = new UserEntity(UserDataBuilder({}));
+
+    await sut.insert(input);
+
+    const output = await sut.findByID(input._id);
+
+    expect(output._id).toBeDefined();
+    expect(output.name).toStrictEqual(input.name);
+    expect(output.email).toStrictEqual(input.email);
+    expect(output.createdAt).toStrictEqual(input.createdAt);
+  });
+
+  it('Should throw error when a user not found', async () => {
+    const input = new UserEntity(UserDataBuilder({}));
+
+    await sut.insert(input);
+
+    expect(sut.findByID('wrong_id')).rejects.toThrow(
+      new NotFoundError('Entity not found'),
+    );
+  });
+
   it('Should no filter items when filter object is null', async () => {
     const entity = new UserEntity(UserDataBuilder({}));
 

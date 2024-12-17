@@ -1,9 +1,9 @@
 import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
-import { GetUserByEmail } from '../get-user-by-email.use-case';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
-import { Signup } from '../signup.use-case';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { GetUserByEmail } from '../../get-user-by-email.use-case';
+import { Signup } from '../../signup.use-case';
 
 describe('GetUserByEmail unit tests', () => {
   let sut: GetUserByEmail;

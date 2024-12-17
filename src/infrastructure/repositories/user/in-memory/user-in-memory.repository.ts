@@ -23,6 +23,16 @@ export class UserInMemoryRepository
     return foundedUser;
   }
 
+  async findById(id: string): Promise<UserEntity> {
+    const foundedUser = this.items.find((user) => user.id === id);
+
+    if (!foundedUser) {
+      throw new NotFoundError(`User not found using ${id}`);
+    }
+
+    return foundedUser;
+  }
+
   // Checa se o email existe na base de dados, se existir, não deve criar um novo usuário com o mesmo email
   async emailExist(email: string): Promise<void> {
     const foundedUser = this.items.find((user) => user.email === email);
