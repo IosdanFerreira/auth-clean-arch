@@ -9,7 +9,7 @@ export class UpdatePassword {
     private hashProvider: HashProviderInterface,
   ) {}
 
-  async execute(input: SignupInput): Promise<SignupOutput> {
+  async execute(input: updatePasswordInput): Promise<updatePasswordOutput> {
     const userExist = await this.userRepository.findByID(input.id);
 
     if (!input.oldPassword || !input.password) {
@@ -38,10 +38,10 @@ export class UpdatePassword {
   }
 }
 
-export type SignupInput = {
+export type updatePasswordInput = {
   id: string;
   password: string;
   oldPassword: string;
 };
 
-export type SignupOutput = UserOutputDto;
+export type updatePasswordOutput = UserOutputDto;

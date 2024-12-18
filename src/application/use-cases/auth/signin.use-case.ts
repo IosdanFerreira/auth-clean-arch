@@ -1,4 +1,3 @@
-// import { UserEntity } from '@src/domain/entities/user/user.entity';
 import { UserRepository } from '@src/domain/repositories/user.repository';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
@@ -10,7 +9,7 @@ export class Signin {
     readonly hashProvider: BcryptjsHashProvider,
   ) {}
 
-  async execute(input: SignupInput): Promise<any> {
+  async execute(input: SigninInput): Promise<SigninOutput> {
     const { email, password } = input;
 
     if (!email || !password) {
@@ -32,9 +31,9 @@ export class Signin {
   }
 }
 
-export type SignupInput = {
+export type SigninInput = {
   email: string;
   password: string;
 };
 
-export type SignupOutput = UserOutputDto;
+export type SigninOutput = UserOutputDto;

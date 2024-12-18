@@ -69,7 +69,12 @@ describe('ListUsers unit tests', () => {
 
     repository.items = users;
 
-    const output = await sut.execute({});
+    const output = await sut.execute({
+      page: 0,
+      perPage: 0,
+      sort: '',
+      sortDir: 'asc',
+    });
 
     expect(output).toStrictEqual({
       items: [...users].reverse().map((item) => item.toJson()),
@@ -101,7 +106,7 @@ describe('ListUsers unit tests', () => {
 
     expect(output).toStrictEqual({
       items: [items[1].toJson(), items[2].toJson()],
-      total: 3,
+      totalItems: 3,
       currentPage: 1,
       lastPage: 2,
       perPage: 2,
@@ -116,7 +121,7 @@ describe('ListUsers unit tests', () => {
     });
     expect(output).toStrictEqual({
       items: [items[0].toJson()],
-      total: 3,
+      totalItems: 3,
       currentPage: 2,
       lastPage: 2,
       perPage: 2,
@@ -130,7 +135,7 @@ describe('ListUsers unit tests', () => {
     });
     expect(output).toStrictEqual({
       items: [items[0].toJson(), items[2].toJson(), items[1].toJson()],
-      total: 3,
+      totalItems: 3,
       currentPage: 1,
       lastPage: 1,
       perPage: 3,
