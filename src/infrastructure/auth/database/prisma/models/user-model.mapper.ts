@@ -11,7 +11,7 @@ export class UserModelMapper {
     };
 
     try {
-      return new UserEntity(data, model.id);
+      return new UserEntity({ ...data }, model.id);
     } catch {
       throw new Error('An entity not be loaded');
     }

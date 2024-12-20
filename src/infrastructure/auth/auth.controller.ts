@@ -23,6 +23,8 @@ import { SigninDto } from './dto/signin.dto';
 import { ListUsersDto } from './dto/list-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UserOutputDto } from '@src/application/use-cases/auth/dto/user-output.dto';
+import { AuthPresenter } from './presenters/auth.presenter';
 
 @Controller('users')
 export class AuthController {
@@ -47,16 +49,24 @@ export class AuthController {
   @Inject(ListUsers)
   private listUsersUseCase: ListUsers;
 
+  static AuthToResponse(output: UserOutputDto) {
+    return new AuthPresenter(output);
+  }
+
   @Post('signup')
   @HttpCode(201)
-  signup(@Body() signupDto: SignupDto) {
-    return this.signupUseCase.execute(signupDto);
+  async signup(@Body() signupDto: SignupDto) {
+    const output = await this.signupUseCase.execute(signupDto);
+
+    return AuthController.AuthToResponse(output);
   }
 
   @Post('login')
   @HttpCode(200)
-  login(@Body() signinDto: SigninDto) {
-    return this.signinUseCase.execute(signinDto);
+  async login(@Body() signinDto: SigninDto) {
+    const output = await this.signinUseCase.execute(signinDto);
+
+    return AuthController.AuthToResponse(output);
   }
 
   @Get()
@@ -65,16 +75,29 @@ export class AuthController {
   }
 
   @Put()
-  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.updateUserUseCase.execute({ id, ...updateUserDto });
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const output = await this.updateUserUseCase.execute({
+      id,
+      ...updateUserDto,
+    });
+
+    return AuthController.AuthToResponse(output);
   }
 
   @Patch()
-  updatePassword(
+  async updatePassword(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.updatePasswordUseCase.execute({ id, ...updatePasswordDto });
+    const output = await this.updatePasswordUseCase.execute({
+      id,
+      ...updatePasswordDto,
+    });
+
+    return AuthController.AuthToResponse(output);
   }
 
   @Delete()

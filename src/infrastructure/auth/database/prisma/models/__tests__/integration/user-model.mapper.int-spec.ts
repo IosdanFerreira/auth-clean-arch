@@ -19,7 +19,7 @@ describe('User model mapper integrations tests', () => {
       id: '698b0c7e-c68b-4cfd-99dd-aac08024be8d',
       name: 'Jhon Doe',
       email: 'a@a.com',
-      password: '123456',
+      password: 'TestPassword123',
       createdAt: new Date(),
     };
   });
@@ -45,6 +45,7 @@ describe('User model mapper integrations tests', () => {
 
     const sut = UserModelMapper.toEntity(input);
 
+    expect(sut.toJson()).toStrictEqual(props);
     expect(sut).toBeInstanceOf(UserEntity);
   });
 });
