@@ -1,20 +1,20 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+import { AuthRepositoryDatabase } from './database/prisma/repositories/user-prisma.repository';
 import { BcryptjsHashProvider } from '../providers/hash-provider/bcryptjs-hash.provider';
-import { Signup } from '@src/application/use-cases/auth/signup.use-case';
-import { UserRepository } from '@src/domain/repositories/user.repository';
+import { DeleteUser } from '@src/application/use-cases/user/delete-user.use-case';
+import { GetUserByEmail } from '@src/application/use-cases/user/get-user-by-email.use-case';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
-import { Signin } from '@src/application/use-cases/auth/signin.use-case';
-import { GetUserByEmail } from '@src/application/use-cases/auth/get-user-by-email.use-case';
-import { ListUsers } from '@src/application/use-cases/auth/list-users.use-case';
-import { UpdateUser } from '@src/application/use-cases/auth/update-user.use-case';
-import { UpdatePassword } from '@src/application/use-cases/auth/update-password.use-case';
-import { DeleteUser } from '@src/application/use-cases/auth/delete-user.use-case';
-import { AuthRepositoryDatabase } from './database/prisma/repositories/auth.repository';
+import { ListUsers } from '@src/application/use-cases/user/list-users.use-case';
+import { Module } from '@nestjs/common';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
+import { Signin } from '@src/application/use-cases/user/signin.use-case';
+import { Signup } from '@src/application/use-cases/user/signup.use-case';
+import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
+import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
+import { UserController } from './user.controller';
+import { UserRepository } from '@src/domain/repositories/user.repository';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [UserController],
   providers: [
     {
       provide: 'PrismaService',
@@ -91,4 +91,4 @@ import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma
     },
   ],
 })
-export class AuthModule {}
+export class UserModule {}

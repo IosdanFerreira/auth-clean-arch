@@ -1,14 +1,14 @@
-import { AuthController } from '../../auth.controller';
-import { UserOutputDto } from '@src/application/use-cases/auth/dto/user-output.dto';
-import { SignupDto } from '../../dto/signup.dto';
-import { SignupOutput } from '@src/application/use-cases/auth/signup.use-case';
-import { SigninDto } from '../../dto/signin.dto';
-import { UpdateUserDto } from '../../dto/update-user.dto';
-import { UpdateUserOutput } from '@src/application/use-cases/auth/update-user.use-case';
-import { UpdatePasswordDto } from '../../dto/update-password.dto';
-import { updatePasswordOutput } from '@src/application/use-cases/auth/update-password.use-case';
-import { ListUsersOutput } from '@src/application/use-cases/auth/list-users.use-case';
+import { AuthController } from '../../user.controller';
+import { ListUsersOutput } from '@src/application/use-cases/user/list-users.use-case';
 import { SearchInput } from '@src/shared/application/dtos/search-input.dto';
+import { SigninDto } from '../../dto/signin.dto';
+import { SignupDto } from '../../dto/signup.dto';
+import { SignupOutput } from '@src/application/use-cases/user/signup.use-case';
+import { UpdatePasswordDto } from '../../dto/update-password.dto';
+import { UpdateUserDto } from '../../dto/update-user.dto';
+import { UpdateUserOutput } from '@src/application/use-cases/user/update-user.use-case';
+import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
+import { updatePasswordOutput } from '@src/application/use-cases/user/update-password.use-case';
 
 describe('AuthController unit tests', () => {
   let sut: AuthController;
@@ -27,10 +27,6 @@ describe('AuthController unit tests', () => {
       password: '12345678',
       createdAt: new Date(),
     };
-  });
-
-  it('should be defined', () => {
-    expect(sut).toBeDefined();
   });
 
   it('should create user', async () => {

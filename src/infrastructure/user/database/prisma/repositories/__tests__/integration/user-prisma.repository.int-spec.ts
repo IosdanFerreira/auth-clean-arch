@@ -1,15 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import { execSync } from 'node:child_process';
-import { AuthRepositoryDatabase } from '../../auth.repository';
-import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
-import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
 import {
   SearchParams,
   SearchResult,
 } from '@src/shared/domain/repositories/searchable-repository-contract';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { AuthRepositoryDatabase } from '../../user-prisma.repository';
+import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
+import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { PrismaClient } from '@prisma/client';
+import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { execSync } from 'node:child_process';
 
 describe('User repository database integrations tests', () => {
   const prismaService = new PrismaClient();

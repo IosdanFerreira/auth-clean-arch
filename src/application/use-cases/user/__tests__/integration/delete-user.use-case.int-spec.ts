@@ -1,12 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { AuthRepositoryDatabase } from '@src/infrastructure/auth/database/prisma/repositories/auth.repository';
 import { Test, TestingModule } from '@nestjs/testing';
-import { execSync } from 'node:child_process';
+
+import { AuthRepositoryDatabase } from '@src/infrastructure/user/database/prisma/repositories/user-prisma.repository';
 import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
 import { DeleteUser } from '../../delete-user.use-case';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { PrismaClient } from '@prisma/client';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { execSync } from 'node:child_process';
 
 describe('DeleteUserUseCase integration tests', () => {
   const prismaService = new PrismaClient();

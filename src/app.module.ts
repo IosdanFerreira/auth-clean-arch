@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './infrastructure/auth/auth.module';
-import { DatabaseModule } from './shared/infrastructure/database/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './shared/infrastructure/database/database.module';
+import { Module } from '@nestjs/common';
+import { UserModule } from './infrastructure/user/user.module';
 
 @Module({
-  imports: [ConfigModule, AuthModule, DatabaseModule],
+  imports: [ConfigModule, UserModule, DatabaseModule],
   controllers: [AppController],
   providers: [AppService],
 })

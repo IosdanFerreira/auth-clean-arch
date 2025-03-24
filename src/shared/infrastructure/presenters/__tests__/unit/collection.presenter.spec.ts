@@ -1,10 +1,11 @@
-import { instanceToPlain } from 'class-transformer';
 import { CollectionPresenter } from '../../collection.presenter';
 import { PaginationPresenter } from '../../pagination.presenter';
+import { instanceToPlain } from 'class-transformer';
 
 class StubCollectionPresenter extends CollectionPresenter {
   data = [1, 2, 3];
 }
+
 describe('CollectionPresenter unit tests', () => {
   let sut: StubCollectionPresenter;
   beforeEach(() => {
@@ -32,7 +33,7 @@ describe('CollectionPresenter unit tests', () => {
         currentPage: 1,
         perPage: 2,
         lastPage: 2,
-        total: 4,
+        totalItems: 4,
       },
     });
   });

@@ -1,4 +1,4 @@
-import { SignupInput } from '@src/application/use-cases/auth/signup.use-case';
+import { SignupInput } from '@src/application/use-cases/user/signup.use-case';
 
 export class SignupDto implements SignupInput {
   name: string;

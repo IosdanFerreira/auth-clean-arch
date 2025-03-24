@@ -1,11 +1,12 @@
-import { PrismaClient } from '@prisma/client';
-import { AuthRepositoryDatabase } from '@src/infrastructure/auth/database/prisma/repositories/auth.repository';
-import { Signup } from '../../signup.use-case';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
-import { execSync } from 'node:child_process';
-import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
+
+import { AuthRepositoryDatabase } from '@src/infrastructure/user/database/prisma/repositories/user-prisma.repository';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
+import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
+import { PrismaClient } from '@prisma/client';
+import { Signup } from '../../signup.use-case';
+import { execSync } from 'node:child_process';
 
 describe('SignupUseCase integration tests', () => {
   const prismaService = new PrismaClient();

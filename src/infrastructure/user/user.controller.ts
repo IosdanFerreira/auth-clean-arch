@@ -12,22 +12,22 @@ import {
   Delete,
 } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
-import { Signup } from '@src/application/use-cases/auth/signup.use-case';
-import { Signin } from '@src/application/use-cases/auth/signin.use-case';
-import { UpdateUser } from '@src/application/use-cases/auth/update-user.use-case';
-import { UpdatePassword } from '@src/application/use-cases/auth/update-password.use-case';
-import { DeleteUser } from '@src/application/use-cases/auth/delete-user.use-case';
-import { GetUserByEmail } from '@src/application/use-cases/auth/get-user-by-email.use-case';
-import { ListUsers } from '@src/application/use-cases/auth/list-users.use-case';
+import { Signup } from '@src/application/use-cases/user/signup.use-case';
+import { Signin } from '@src/application/use-cases/user/signin.use-case';
+import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
+import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
+import { DeleteUser } from '@src/application/use-cases/user/delete-user.use-case';
+import { GetUserByEmail } from '@src/application/use-cases/user/get-user-by-email.use-case';
+import { ListUsers } from '@src/application/use-cases/user/list-users.use-case';
 import { SigninDto } from './dto/signin.dto';
 import { ListUsersDto } from './dto/list-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { UserOutputDto } from '@src/application/use-cases/auth/dto/user-output.dto';
-import { AuthPresenter } from './presenters/auth.presenter';
+import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
+import { UserPresenter } from './presenters/user.presenter';
 
 @Controller('users')
-export class AuthController {
+export class UserController {
   @Inject(Signup)
   private signupUseCase: Signup;
 
@@ -49,8 +49,8 @@ export class AuthController {
   @Inject(ListUsers)
   private listUsersUseCase: ListUsers;
 
-  static AuthToResponse(output: UserOutputDto) {
-    return new AuthPresenter(output);
+  static UserToResponse(output: UserOutputDto) {
+    return new UserPresenter(output);
   }
 
   @Post('signup')
@@ -58,7 +58,7 @@ export class AuthController {
   async signup(@Body() signupDto: SignupDto) {
     const output = await this.signupUseCase.execute(signupDto);
 
-    return AuthController.AuthToResponse(output);
+    return UserController.UserToResponse(output);
   }
 
   @Post('login')
@@ -66,7 +66,7 @@ export class AuthController {
   async login(@Body() signinDto: SigninDto) {
     const output = await this.signinUseCase.execute(signinDto);
 
-    return AuthController.AuthToResponse(output);
+    return UserController.UserToResponse(output);
   }
 
   @Get()
@@ -84,7 +84,7 @@ export class AuthController {
       ...updateUserDto,
     });
 
-    return AuthController.AuthToResponse(output);
+    return UserController.UserToResponse(output);
   }
 
   @Patch()
@@ -97,7 +97,7 @@ export class AuthController {
       ...updatePasswordDto,
     });
 
-    return AuthController.AuthToResponse(output);
+    return UserController.UserToResponse(output);
   }
 
   @Delete()
