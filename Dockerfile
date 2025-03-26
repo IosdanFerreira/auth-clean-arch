@@ -1,5 +1,5 @@
 # Versão do node utilizado no projeto 
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Instala o bash
 RUN apk add --no-cache bash

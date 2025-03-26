@@ -1,41 +1,34 @@
-import { AuthController } from '../../user.controller';
+import { ListUsersDto } from '../../dto/list-users.dto';
 import { ListUsersOutput } from '@src/application/use-cases/user/list-users.use-case';
-import { SearchInput } from '@src/shared/application/dtos/search-input.dto';
 import { SigninDto } from '../../dto/signin.dto';
 import { SignupDto } from '../../dto/signup.dto';
 import { SignupOutput } from '@src/application/use-cases/user/signup.use-case';
 import { UpdatePasswordDto } from '../../dto/update-password.dto';
 import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UpdateUserOutput } from '@src/application/use-cases/user/update-user.use-case';
+import { UserController } from '../../user.controller';
 import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
+import { UserPresenter } from '../../presenters/user.presenter';
 import { updatePasswordOutput } from '@src/application/use-cases/user/update-password.use-case';
 
-describe('AuthController unit tests', () => {
-  let sut: AuthController;
+describe('UsersController unit tests', () => {
+  let sut: UserController;
   let id: string;
   let props: UserOutputDto;
 
   beforeEach(async () => {
-    sut = new AuthController();
-
+    sut = new UserController();
     id = 'df96ae94-6128-486e-840c-b6f78abb4801';
-
     props = {
       id,
       name: 'Jhon Doe',
       email: 'a@a.com',
-      password: '12345678',
+      password: '1234',
       createdAt: new Date(),
     };
   });
 
-  it('should create user', async () => {
-    const input: SignupDto = {
-      name: 'test',
-      email: 'test@gmail.com',
-      password: '12345678',
-    };
-
+  it('should create a user', async () => {
     const output: SignupOutput = props;
 
     const mockSignupUseCase = {
@@ -44,38 +37,51 @@ describe('AuthController unit tests', () => {
 
     sut['signupUseCase'] = mockSignupUseCase as any;
 
-    const result = await sut.signup(input);
-
-    expect(result).toMatchObject(output);
-    expect(mockSignupUseCase.execute).toHaveBeenCalled();
-  });
-
-  it('should login user', async () => {
-    const input: SigninDto = {
-      email: 'test@gmail.com',
-      password: '12345678',
+    const input: SignupDto = {
+      name: 'Jhon Doe',
+      email: 'a@a.com',
+      password: '1234',
     };
 
-    const output: SignupOutput = props;
+    const presenter = await sut.signup(input);
+
+    expect(presenter).toBeInstanceOf(UserPresenter);
+    expect(presenter).toStrictEqual(new UserPresenter(output));
+    expect(mockSignupUseCase.execute).toHaveBeenCalledWith(input);
+  });
+
+  it('should authenticate a user', async () => {
+    const output = {
+      createdAt: new Date(),
+      email: 'john@a.com',
+      id: '7bd93b33-9a82-4a1e-a3aa-3ed23dc32079',
+      name: 'John Doe',
+    };
 
     const mockSigninUseCase = {
       execute: jest.fn().mockReturnValue(Promise.resolve(output)),
     };
 
+    const mockAuthService = {
+      generateJwt: jest.fn().mockReturnValue(Promise.resolve(output)),
+    };
+
     sut['signinUseCase'] = mockSigninUseCase as any;
+
+    sut['authService'] = mockAuthService as any;
+
+    const input: SigninDto = {
+      email: 'a@a.com',
+      password: '1234',
+    };
 
     const result = await sut.login(input);
 
-    expect(result).toMatchObject(output);
-    expect(mockSigninUseCase.execute).toHaveBeenCalled();
+    expect(result).toEqual(output);
     expect(mockSigninUseCase.execute).toHaveBeenCalledWith(input);
   });
 
-  it('should update user', async () => {
-    const input: UpdateUserDto = {
-      name: 'new test',
-    };
-
+  it('should update a user', async () => {
     const output: UpdateUserOutput = props;
 
     const mockUpdateUserUseCase = {
@@ -83,23 +89,21 @@ describe('AuthController unit tests', () => {
     };
 
     sut['updateUserUseCase'] = mockUpdateUserUseCase as any;
+    const input: UpdateUserDto = {
+      name: 'new name',
+    };
 
-    const result = await sut.updateUser(id, input);
+    const presenter = await sut.updateUser(id, input);
 
-    expect(result).toMatchObject(output);
-    expect(mockUpdateUserUseCase.execute).toHaveBeenCalled();
+    expect(presenter).toBeInstanceOf(UserPresenter);
+    expect(presenter).toStrictEqual(new UserPresenter(output));
     expect(mockUpdateUserUseCase.execute).toHaveBeenCalledWith({
       id,
       ...input,
     });
   });
 
-  it('should update password', async () => {
-    const input: UpdatePasswordDto = {
-      oldPassword: '12345678',
-      password: 'new-password',
-    };
-
+  it('should update a users password', async () => {
     const output: updatePasswordOutput = props;
 
     const mockUpdatePasswordUseCase = {
@@ -108,10 +112,15 @@ describe('AuthController unit tests', () => {
 
     sut['updatePasswordUseCase'] = mockUpdatePasswordUseCase as any;
 
-    const result = await sut.updatePassword(id, input);
+    const input: UpdatePasswordDto = {
+      password: 'new password',
+      oldPassword: 'old password',
+    };
 
-    expect(result).toMatchObject(output);
-    expect(mockUpdatePasswordUseCase.execute).toHaveBeenCalled();
+    const presenter = await sut.updatePassword(id, input);
+
+    expect(presenter).toBeInstanceOf(UserPresenter);
+    expect(presenter).toStrictEqual(new UserPresenter(output));
     expect(mockUpdatePasswordUseCase.execute).toHaveBeenCalledWith({
       id,
       ...input,
@@ -147,17 +156,25 @@ describe('AuthController unit tests', () => {
     const mockListUsersUseCase = {
       execute: jest.fn().mockReturnValue(Promise.resolve(output)),
     };
+
     sut['listUsersUseCase'] = mockListUsersUseCase as any;
 
-    const searchParams: SearchInput = {
-      page: 1,
-      perPage: 1,
-      sort: 'createdAt',
-      sortDir: 'desc',
+    const searchParams: ListUsersDto = {
+      page: 0,
+      perPage: 0,
+      sort: '',
+      sortDir: 'asc',
     };
 
-    const result = await sut.search(searchParams);
-    expect(output).toStrictEqual(result);
+    const presenter = await sut.search(searchParams);
+
+    expect(presenter).toEqual({
+      items: output.items,
+      currentPage: output.currentPage,
+      lastPage: output.lastPage,
+      perPage: output.perPage,
+      totalItems: output.totalItems,
+    });
     expect(mockListUsersUseCase.execute).toHaveBeenCalledWith(searchParams);
   });
 });
