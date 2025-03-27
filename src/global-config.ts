@@ -4,6 +4,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { BadRequestErrorFilter } from './shared/infrastructure/exception-filters/bad-request/bad-request-error.filter';
 import { ConflictErrorFilter } from './shared/infrastructure/exception-filters/conflict-error/conflict-error.filter';
 import { InvalidCredentialsErrorFilter } from './shared/infrastructure/exception-filters/invalid-credentials-error/invalid-credentials-error.filter';
 import { InvalidPasswordErrorFilter } from './shared/infrastructure/exception-filters/invalid-password-error/invalid-password-error.filter';
@@ -29,5 +30,6 @@ export function applyGlobalConfig(app: INestApplication) {
     new NotFoundErrorFilter(),
     new InvalidPasswordErrorFilter(),
     new InvalidCredentialsErrorFilter(),
+    new BadRequestErrorFilter(),
   );
 }

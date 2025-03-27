@@ -3,11 +3,13 @@ import {
   UserSearchParams,
   UserSearchResults,
 } from '@src/domain/repositories/user.repository';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
-import { UserModelMapper } from '../models/user-model.mapper';
+
+import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
 import { SearchResult } from '@src/shared/domain/repositories/searchable-repository-contract';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { UserModelMapper } from '../models/user-model.mapper';
 
 export class AuthRepositoryDatabase implements UserRepository {
   sortableFields: string[] = ['name', 'createdAt'];
@@ -32,8 +34,8 @@ export class AuthRepositoryDatabase implements UserRepository {
       // Map the retrieved user model to a UserEntity
       return UserModelMapper.toEntity(user);
     } catch {
-      // If the user is not found, throw a NotFoundError
-      throw new NotFoundError('User not found');
+      // If the user is not found, return null
+      return null;
     }
   }
 
@@ -51,7 +53,9 @@ export class AuthRepositoryDatabase implements UserRepository {
 
     // If the user is found, throw an error
     if (user) {
-      throw new Error('Email already exist');
+      throw new BadRequestError(
+        'Já existe um usuário com esse endereço de email',
+      );
     }
   }
 
@@ -205,7 +209,7 @@ export class AuthRepositoryDatabase implements UserRepository {
       // Map the retrieved user model to a UserEntity
       return UserModelMapper.toEntity(user);
     } catch {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuário não encontrado');
     }
   }
 }
