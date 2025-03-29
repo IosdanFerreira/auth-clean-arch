@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
-import { InvalidCredentialsError } from '@src/shared/application/errors/invalid-credentials-error';
+import { InvalidCredentialsError } from '@src/shared/domain/errors/invalid-credentials-error';
 import { Response } from 'express';
 
 @Catch(InvalidCredentialsError)

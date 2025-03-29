@@ -1,10 +1,10 @@
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
-import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
-import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
-import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
-import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
+import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { Signup } from '../../signup.use-case';
+import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
 
 describe('Signup unit tests', () => {
   let sut: Signup;

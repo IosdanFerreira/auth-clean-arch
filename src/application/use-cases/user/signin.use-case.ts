@@ -1,5 +1,6 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
+import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
 import { UserOutputDto } from './dto/user-output.dto';
 import { UserRepository } from '@src/domain/repositories/user.repository';
 
@@ -7,14 +8,11 @@ export class Signin {
   constructor(
     readonly userRepository: UserRepository,
     readonly hashProvider: BcryptjsHashProvider,
+    private readonly jwtProvider: JwtProviderInterface,
   ) {}
 
   async execute(input: SigninInput): Promise<SigninOutput> {
     const { email, password } = input;
-
-    if (!email || !password) {
-      throw new BadRequestError('Params not provided');
-    }
 
     const userExist = await this.userRepository.findByEmail(email);
 
@@ -28,10 +26,18 @@ export class Signin {
     );
 
     if (!hashPasswordMatches) {
-      throw new Error('Invalid credentials');
+      throw new BadRequestError('Email ou senha inválidos');
     }
 
-    return userExist.toJson();
+    const token = await this.jwtProvider.generateToken({
+      sub: userExist.id,
+      email: userExist.email,
+    });
+
+    return {
+      ...userExist.toJson(),
+      accessToken: token,
+    };
   }
 }
 
@@ -40,4 +46,6 @@ export type SigninInput = {
   password: string;
 };
 
-export type SigninOutput = UserOutputDto;
+export type SigninOutput = UserOutputDto & {
+  accessToken: string;
+};

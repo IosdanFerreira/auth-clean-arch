@@ -1,7 +1,8 @@
-import { UserRepository } from '@src/domain/repositories/user.repository';
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
-import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
+
+import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
+import { UserRepository } from '@src/domain/repositories/user.repository';
 
 export class UpdatePassword {
   constructor(
@@ -12,8 +13,8 @@ export class UpdatePassword {
   async execute(input: updatePasswordInput): Promise<updatePasswordOutput> {
     const userExist = await this.userRepository.findByID(input.id);
 
-    if (!input.oldPassword || !input.password) {
-      throw new BadRequestError('Old password and new password is required');
+    if (!userExist) {
+      console.log(input.id);
     }
 
     const checkOldPassword = await this.hashProvider.compareHash(
@@ -22,7 +23,7 @@ export class UpdatePassword {
     );
 
     if (!checkOldPassword) {
-      throw new Error('Invalid old password');
+      throw new BadRequestError('Senha inválida');
     }
 
     const newHashPassword = await this.hashProvider.generateHash(
@@ -40,8 +41,8 @@ export class UpdatePassword {
 
 export type updatePasswordInput = {
   id: string;
-  password: string;
   oldPassword: string;
+  password: string;
 };
 
 export type updatePasswordOutput = UserOutputDto;

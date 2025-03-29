@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
-import { InvalidPasswordError } from '@src/shared/application/errors/invalid-password-error';
+import { InvalidPasswordError } from '@src/shared/domain/errors/invalid-password-error';
 import { Response } from 'express';
 
 @Catch(InvalidPasswordError)

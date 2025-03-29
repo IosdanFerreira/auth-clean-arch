@@ -1,5 +1,6 @@
 import {
   ClassSerializerInterceptor,
+  HttpStatus,
   INestApplication,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { WrapperDataInterceptor } from './shared/interceptors/wrapper-data/wrapp
 export function applyGlobalConfig(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
-      errorHttpStatusCode: 422,
+      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,

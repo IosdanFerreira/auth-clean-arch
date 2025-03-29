@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthRepositoryDatabase } from '@src/infrastructure/user/database/prisma/repositories/user-prisma.repository';
+import { AuthRepositoryDatabase } from '@src/infrastructure/modules/user/database/prisma/repositories/user-prisma.repository';
 import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
 import { DeleteUser } from '../../delete-user.use-case';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';

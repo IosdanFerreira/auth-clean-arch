@@ -1,21 +1,16 @@
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { UserRepository } from '@src/domain/repositories/user.repository';
-import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { UserOutputDto } from './dto/user-output.dto';
+import { UserRepository } from '@src/domain/repositories/user.repository';
 
 export class Signup {
   constructor(
     readonly userRepository: UserRepository,
-    readonly hashProvider: BcryptjsHashProvider,
+    readonly hashProvider: HashProviderInterface,
   ) {}
 
   async execute(input: SignupInput): Promise<SignupOutput> {
     const { name, email, password } = input;
-
-    if (!name || !email || !password) {
-      throw new BadRequestError('Params not provider');
-    }
 
     await this.userRepository.emailExist(email);
 

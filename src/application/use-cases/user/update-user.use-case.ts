@@ -1,22 +1,30 @@
-import { UserRepository } from '@src/domain/repositories/user.repository';
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
+
+import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { UserRepository } from '@src/domain/repositories/user.repository';
 
 export class UpdateUser {
   constructor(readonly userRepository: UserRepository) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    const user = await this.userRepository.findByID(input.id);
-
-    if (!input.name) {
-      throw new BadRequestError('Name not provided');
+    if (!input.id) {
+      throw new BadRequestError('ID do usuário precisa ser informado');
     }
 
-    user.update(input.name);
+    const userAlreadyExists = await this.userRepository.findByID(input.id);
 
-    await this.userRepository.update(input.id, user);
+    if (!userAlreadyExists) {
+      throw new NotFoundError(
+        'Nenhum usuário com o ID informado foi encontrado',
+      );
+    }
 
-    return UserOutputMapper.toOutput(user);
+    userAlreadyExists.update(input.name);
+
+    await this.userRepository.update(input.id, userAlreadyExists);
+
+    return UserOutputMapper.toOutput(userAlreadyExists);
   }
 }
 

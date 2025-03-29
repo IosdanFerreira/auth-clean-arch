@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthRepositoryDatabase } from '@src/infrastructure/user/database/prisma/repositories/user-prisma.repository';
+import { AuthRepositoryDatabase } from '@src/infrastructure/modules/user/database/prisma/repositories/user-prisma.repository';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
-import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { PrismaClient } from '@prisma/client';
 import { Signup } from '../../signup.use-case';
 import { execSync } from 'node:child_process';

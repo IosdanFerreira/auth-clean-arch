@@ -1,5 +1,6 @@
-import { HashProviderInterface } from '@src/shared/application/providers/hash-provider';
 import { compare, hash } from 'bcryptjs';
+
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 
 export class BcryptjsHashProvider implements HashProviderInterface {
   generateHash(payload: string, salt: number): Promise<string> {
