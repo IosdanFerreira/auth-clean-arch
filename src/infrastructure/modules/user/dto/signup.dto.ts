@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-import { SignupInput } from '@src/application/use-cases/user/signup.use-case';
+import { SignupInput } from '@src/application/use-cases/user/signup/signup.use-case';
 
 export class SignupDto implements SignupInput {
   @IsString({ message: 'name deve ser do tipo string' })

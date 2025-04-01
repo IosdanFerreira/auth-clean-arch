@@ -2,7 +2,7 @@ import { ListUsersDto } from '../../dto/list-users.dto';
 import { ListUsersOutput } from '@src/application/use-cases/user/list-users.use-case';
 import { SigninDto } from '../../dto/signin.dto';
 import { SignupDto } from '../../dto/signup.dto';
-import { SignupOutput } from '@src/application/use-cases/user/signup.use-case';
+import { SignupOutput } from '@src/application/use-cases/user/signup/signup.use-case';
 import { UpdatePasswordDto } from '../../dto/update-password.dto';
 import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UpdateUserOutput } from '@src/application/use-cases/user/update-user.use-case';

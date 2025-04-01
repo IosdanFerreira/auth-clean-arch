@@ -5,7 +5,7 @@ import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provide
 import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { PrismaClient } from '@prisma/client';
-import { Signup } from '../../signup.use-case';
+import { Signup } from '../../signup/signup.use-case';
 import { execSync } from 'node:child_process';
 
 describe('SignupUseCase integration tests', () => {

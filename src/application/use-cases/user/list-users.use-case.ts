@@ -1,17 +1,18 @@
 import {
-  UserSearchParams,
-  UserRepository,
-  UserSearchResults,
-} from '@src/domain/repositories/user.repository';
-import { SearchInput } from '@src/shared/application/dtos/search-input.dto';
-import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
-import {
   PaginationOutput,
   PaginationOutputMapper,
 } from '@src/shared/application/dtos/pagination-output.dto';
+import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
+import {
+  UserRepositoryInterface,
+  UserSearchParams,
+  UserSearchResults,
+} from '@src/domain/repositories/user.repository';
+
+import { SearchInput } from '@src/shared/application/dtos/search-input.dto';
 
 export class ListUsers {
-  constructor(readonly userRepository: UserRepository) {}
+  constructor(readonly userRepository: UserRepositoryInterface) {}
 
   async execute(input: ListUsersInput): Promise<ListUsersOutput> {
     const searchParams = new UserSearchParams(input);

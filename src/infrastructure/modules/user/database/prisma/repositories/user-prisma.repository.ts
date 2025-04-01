@@ -1,16 +1,15 @@
 import {
-  UserRepository,
+  UserRepositoryInterface,
   UserSearchParams,
   UserSearchResults,
 } from '@src/domain/repositories/user.repository';
 
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
 import { SearchResult } from '@src/shared/domain/repositories/searchable-repository-contract';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
 import { UserModelMapper } from '../models/user-model.mapper';
 
-export class AuthRepositoryDatabase implements UserRepository {
+export class AuthRepositoryDatabase implements UserRepositoryInterface {
   sortableFields: string[] = ['name', 'createdAt'];
 
   constructor(private readonly prismaService: PrismaService) {}
@@ -35,26 +34,6 @@ export class AuthRepositoryDatabase implements UserRepository {
     } catch {
       // If the user is not found, return null
       return null;
-    }
-  }
-
-  /**
-   * Verifies if a given email address is already in use.
-   * @param email - The email address to verify.
-   * @returns A promise that resolves if the email address is not in use.
-   * @throws {Error} If the email address is already in use.
-   */
-  async emailExist(email: string): Promise<void> {
-    // Query the database to find a user by the given email
-    const user = await this.prismaService.user.findUnique({
-      where: { email },
-    });
-
-    // If the user is found, throw an error
-    if (user) {
-      throw new BadRequestError(
-        'Já existe um usuário com esse endereço de email',
-      );
     }
   }
 
@@ -197,18 +176,17 @@ export class AuthRepositoryDatabase implements UserRepository {
    * @returns A promise that resolves to the UserEntity.
    */
   protected async _get(id: string): Promise<UserEntity> {
-    try {
-      // Query the database to find a user by their unique ID
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          id,
-        },
-      });
+    // Query the database to find a user by their unique ID
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
-      // Map the retrieved user model to a UserEntity
-      return UserModelMapper.toEntity(user);
-    } catch {
+    if (!user) {
       return null;
     }
+    // Map the retrieved user model to a UserEntity
+    return UserModelMapper.toEntity(user);
   }
 }

@@ -2,10 +2,10 @@ import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
 
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
-import { UserRepository } from '@src/domain/repositories/user.repository';
+import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
 export class UpdateUser {
-  constructor(readonly userRepository: UserRepository) {}
+  constructor(readonly userRepository: UserRepositoryInterface) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
     if (!input.id) {

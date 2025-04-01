@@ -11,8 +11,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
-import { Signup } from '@src/application/use-cases/user/signup.use-case';
-import { Signin } from '@src/application/use-cases/user/signin.use-case';
+import { Signup } from '@src/application/use-cases/user/signup/signup.use-case';
+import { Signin } from '@src/application/use-cases/user/signin/signin.use-case';
 import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
 import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
 import { DeleteUser } from '@src/application/use-cases/user/delete-user.use-case';

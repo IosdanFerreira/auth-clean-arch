@@ -1,21 +1,23 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
+import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { Signin } from '../../signin.use-case';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
+import { UserInMemoryRepository } from '@src/infrastructure/modules/user/database/in-memory/repositories/user-in-memory.repository';
 
 describe('Signin unit tests', () => {
   let sut: Signin;
   let repository: UserInMemoryRepository;
   let hashProvider: HashProviderInterface;
+  let jwtProvider: JwtProviderInterface;
 
   beforeEach(() => {
     repository = new UserInMemoryRepository();
     hashProvider = new BcryptjsHashProvider();
-    sut = new Signin(repository, hashProvider);
+    sut = new Signin(repository, hashProvider, jwtProvider);
   });
 
   it('Should throw error when email not provider', async () => {
@@ -36,7 +38,7 @@ describe('Signin unit tests', () => {
     };
 
     expect(sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Params not provided'),
+      new BadRequestError('User not found using test@gmail.com'),
     );
   });
 
@@ -62,7 +64,7 @@ describe('Signin unit tests', () => {
 
     expect(
       sut.execute({ email: 'test@gmail.com', password: '123' }),
-    ).rejects.toThrow(new Error('Invalid credentials'));
+    ).rejects.toThrow(new Error('Email ou senha inválidos'));
   });
 
   it('Should signin user', async () => {

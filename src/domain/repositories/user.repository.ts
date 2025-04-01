@@ -1,9 +1,10 @@
-import { UserEntity } from '../entities/user/user.entity';
-import { SearchableRepositoryInterface } from '@src/shared/domain/repositories/searchable-repository-contract';
 import {
   SearchParams as DefaultSearchParams,
   SearchResult as DefaultSearchResult,
 } from '@src/shared/domain/repositories/searchable-repository-contract';
+
+import { SearchableRepositoryInterface } from '@src/shared/domain/repositories/searchable-repository-contract';
+import { UserEntity } from '../entities/user/user.entity';
 
 export type Filter = string;
 
@@ -14,7 +15,7 @@ export class UserSearchResults extends DefaultSearchResult<
   Filter
 > {}
 
-export interface UserRepository
+export interface UserRepositoryInterface
   extends SearchableRepositoryInterface<
     UserEntity,
     Filter,
@@ -22,5 +23,4 @@ export interface UserRepository
     UserSearchResults
   > {
   findByEmail(email: string): Promise<UserEntity>;
-  emailExist(email: string): Promise<void>;
 }

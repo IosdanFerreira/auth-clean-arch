@@ -1,12 +1,12 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
-import { UserOutputDto } from './dto/user-output.dto';
-import { UserRepository } from '@src/domain/repositories/user.repository';
+import { UserOutputDto } from '../dto/user-output.dto';
+import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
 export class Signin {
   constructor(
-    readonly userRepository: UserRepository,
+    readonly userRepository: UserRepositoryInterface,
     readonly hashProvider: BcryptjsHashProvider,
     private readonly jwtProvider: JwtProviderInterface,
   ) {}

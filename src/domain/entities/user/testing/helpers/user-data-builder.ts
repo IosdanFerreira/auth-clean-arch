@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker/.';
 import { UserEntityProps } from '../../user.entity';
+import { faker } from '@faker-js/faker/.';
 
 // Tipo para definir as propriedades opcionais que podem ser passadas para o construtor do builder.
 type Props = {
@@ -21,7 +21,9 @@ export function UserDataBuilder(props: Props): UserEntityProps {
   return {
     name: props.name ?? faker.person.fullName(),
     email: props.email ?? faker.internet.email(),
-    password: props.password ?? faker.internet.password(),
+    password:
+      props.password ??
+      `${faker.internet.password({ length: 6, memorable: true })}A1@`,
     createdAt: props.createdAt ?? new Date(),
   };
 }

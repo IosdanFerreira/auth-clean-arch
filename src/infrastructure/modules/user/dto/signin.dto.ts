@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-import { SigninInput } from '@src/application/use-cases/user/signin.use-case';
+import { SigninInput } from '@src/application/use-cases/user/signin/signin.use-case';
 
 export class SigninDto implements SigninInput {
   @IsEmail({}, { message: 'Insira um email válido' })

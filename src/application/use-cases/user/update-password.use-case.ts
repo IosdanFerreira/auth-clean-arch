@@ -2,11 +2,11 @@ import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
 
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
-import { UserRepository } from '@src/domain/repositories/user.repository';
+import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
 export class UpdatePassword {
   constructor(
-    private userRepository: UserRepository,
+    private userRepository: UserRepositoryInterface,
     private hashProvider: HashProviderInterface,
   ) {}
 

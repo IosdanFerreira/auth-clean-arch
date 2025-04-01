@@ -9,12 +9,12 @@ import { HashProviderInterface } from '@src/shared/application/providers/hash-pr
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
 import { ListUsers } from '@src/application/use-cases/user/list-users.use-case';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
-import { Signin } from '@src/application/use-cases/user/signin.use-case';
-import { Signup } from '@src/application/use-cases/user/signup.use-case';
+import { Signin } from '@src/application/use-cases/user/signin/signin.use-case';
+import { Signup } from '@src/application/use-cases/user/signup/signup.use-case';
 import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
 import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
 import { UserController } from './user.controller';
-import { UserRepository } from '@src/domain/repositories/user.repository';
+import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
 @Module({
   imports: [forwardRef(() => AuthModule)],
@@ -38,7 +38,7 @@ import { UserRepository } from '@src/domain/repositories/user.repository';
     {
       provide: Signup,
       useFactory: (
-        userRepository: UserRepository,
+        userRepository: UserRepositoryInterface,
         hashProvider: HashProviderInterface,
       ) => {
         return new Signup(userRepository, hashProvider);
@@ -48,7 +48,7 @@ import { UserRepository } from '@src/domain/repositories/user.repository';
     {
       provide: Signin,
       useFactory: (
-        userRepository: UserRepository,
+        userRepository: UserRepositoryInterface,
         hashProvider: HashProviderInterface,
         jwtProvider: JwtProviderInterface,
       ) => {
@@ -62,21 +62,21 @@ import { UserRepository } from '@src/domain/repositories/user.repository';
     },
     {
       provide: GetUserByEmail,
-      useFactory: (userRepository: UserRepository) => {
+      useFactory: (userRepository: UserRepositoryInterface) => {
         return new GetUserByEmail(userRepository);
       },
       inject: ['UserRepository'],
     },
     {
       provide: ListUsers,
-      useFactory: (userRepository: UserRepository) => {
+      useFactory: (userRepository: UserRepositoryInterface) => {
         return new ListUsers(userRepository);
       },
       inject: ['UserRepository'],
     },
     {
       provide: UpdateUser,
-      useFactory: (userRepository: UserRepository) => {
+      useFactory: (userRepository: UserRepositoryInterface) => {
         return new UpdateUser(userRepository);
       },
       inject: ['UserRepository'],
@@ -84,7 +84,7 @@ import { UserRepository } from '@src/domain/repositories/user.repository';
     {
       provide: UpdatePassword,
       useFactory: (
-        userRepository: UserRepository,
+        userRepository: UserRepositoryInterface,
         hashProvider: HashProviderInterface,
       ) => {
         return new UpdatePassword(userRepository, hashProvider);
@@ -93,7 +93,7 @@ import { UserRepository } from '@src/domain/repositories/user.repository';
     },
     {
       provide: DeleteUser,
-      useFactory: (userRepository: UserRepository) => {
+      useFactory: (userRepository: UserRepositoryInterface) => {
         return new DeleteUser(userRepository);
       },
       inject: ['UserRepository'],

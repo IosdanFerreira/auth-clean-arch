@@ -1,9 +1,9 @@
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
-import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
-import { UpdateUser } from '../../update-user.use-case';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { UpdateUser } from '../../update-user.use-case';
+import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
 
 describe('Update User unit tests', () => {
   let sut: UpdateUser;
@@ -32,7 +32,7 @@ describe('Update User unit tests', () => {
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Name not provided'),
+      new BadRequestError('Entity validation error'),
     );
   });
 

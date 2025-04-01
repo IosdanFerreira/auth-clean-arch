@@ -29,7 +29,7 @@ describe('Update user password unit tests', () => {
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Old password and new password is required'),
+      new BadRequestError('Senha inválida'),
     );
   });
 
@@ -45,7 +45,7 @@ describe('Update user password unit tests', () => {
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Old password and new password is required'),
+      new BadRequestError('Senha inválida'),
     );
   });
 
@@ -61,7 +61,7 @@ describe('Update user password unit tests', () => {
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Old password and new password is required'),
+      new BadRequestError('Senha inválida'),
     );
   });
 });
