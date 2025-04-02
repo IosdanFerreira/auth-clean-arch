@@ -13,9 +13,7 @@ export class DeleteUser {
     const userAlreadyExists = await this.userRepository.findByID(input.id);
 
     if (!userAlreadyExists) {
-      throw new NotFoundError(
-        'Nenhum usuário com o ID informado foi encontrado',
-      );
+      throw new NotFoundError('Usuário não encontrado');
     }
 
     await this.userRepository.delete(input.id);

@@ -3,7 +3,7 @@ import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { UpdateUser } from '../../update-user.use-case';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
+import { UserInMemoryRepository } from '@src/infrastructure/modules/user/database/in-memory/repositories/user-in-memory.repository';
 
 describe('Update User unit tests', () => {
   let sut: UpdateUser;
@@ -18,7 +18,7 @@ describe('Update User unit tests', () => {
     const input = { id: 'wrong_id', name: 'test' };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new NotFoundError('Entity not found'),
+      new NotFoundError('Nenhum usuário com o ID informado foi encontrado'),
     );
   });
 
@@ -32,7 +32,7 @@ describe('Update User unit tests', () => {
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new BadRequestError('Entity validation error'),
+      new BadRequestError('Nome não pode ser vazio'),
     );
   });
 

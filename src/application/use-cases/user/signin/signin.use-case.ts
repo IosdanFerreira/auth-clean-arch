@@ -1,6 +1,7 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
+import { SigninValidator } from './validator/signin.validator';
 import { UserOutputDto } from '../dto/user-output.dto';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
@@ -12,16 +13,18 @@ export class Signin {
   ) {}
 
   async execute(input: SigninInput): Promise<SigninOutput> {
-    const { email, password } = input;
+    const fieldsValidation = new SigninValidator();
 
-    const userExist = await this.userRepository.findByEmail(email);
+    fieldsValidation.validate(input);
+
+    const userExist = await this.userRepository.findByEmail(input.email);
 
     if (!userExist) {
       throw new BadRequestError('Email ou senha inválidos');
     }
 
     const hashPasswordMatches = await this.hashProvider.compareHash(
-      password,
+      input.password,
       userExist.password,
     );
 

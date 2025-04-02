@@ -1,8 +1,8 @@
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
 import { ListUsers } from '../../list-users.use-case';
-import { UserSearchResults } from '@src/domain/repositories/user.repository';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { UserInMemoryRepository } from '@src/infrastructure/modules/user/database/in-memory/repositories/user-in-memory.repository';
+import { UserSearchResults } from '@src/domain/repositories/user.repository';
 
 describe('ListUsers unit tests', () => {
   let sut: ListUsers;
@@ -70,10 +70,11 @@ describe('ListUsers unit tests', () => {
     repository.items = users;
 
     const output = await sut.execute({
-      page: 0,
-      perPage: 0,
+      page: 1,
+      perPage: 15,
       sort: '',
       sortDir: 'asc',
+      filter: '',
     });
 
     expect(output).toStrictEqual({

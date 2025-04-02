@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthRepositoryDatabase } from '@src/infrastructure/modules/user/database/prisma/repositories/user-prisma.repository';
 import { DatabaseModule } from '@src/shared/infrastructure/database/database.module';
-import { DeleteUser } from '../../delete-user.use-case';
+import { DeleteUser } from '../../delete-user/delete-user.use-case';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { PrismaClient } from '@prisma/client';
 import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';

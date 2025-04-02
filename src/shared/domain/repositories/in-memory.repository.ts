@@ -1,5 +1,4 @@
 import { Entity } from '../entities/entity';
-import { NotFoundError } from '../errors/not-found-error';
 import { RepositoryInterface } from './repository-contract';
 
 // Define uma classe abstrata que implementa um repositório em memória para armazenar entidades.
@@ -73,7 +72,7 @@ export abstract class InMemoryRepository<T extends Entity>
     const entity = this.items.find((item) => item.id === id);
 
     if (!entity) {
-      throw new NotFoundError('Entity not found');
+      return null;
     }
 
     return entity;

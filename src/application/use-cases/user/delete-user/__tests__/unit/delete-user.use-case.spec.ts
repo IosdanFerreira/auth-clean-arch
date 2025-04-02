@@ -1,8 +1,8 @@
-import { UserInMemoryRepository } from '@src/infrastructure/repositories/user/in-memory/user-in-memory.repository';
-import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
-import { UserEntity } from '@src/domain/entities/user/user.entity';
 import { DeleteUser } from '../../delete-user.use-case';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { UserDataBuilder } from '@src/domain/entities/user/testing/helpers/user-data-builder';
+import { UserEntity } from '@src/domain/entities/user/user.entity';
+import { UserInMemoryRepository } from '@src/infrastructure/modules/user/database/in-memory/repositories/user-in-memory.repository';
 
 describe('Delete user password unit tests', () => {
   let sut: DeleteUser;
@@ -13,13 +13,22 @@ describe('Delete user password unit tests', () => {
     sut = new DeleteUser(repository);
   });
 
+  it('Should throw error when ID not provided', async () => {
+    const input = {
+      id: '',
+    };
+
+    await expect(() => sut.execute(input)).rejects.toThrow(
+      new NotFoundError('ID do usuário precisa ser informado'),
+    );
+  });
   it('Should throw error when user not found', async () => {
     const input = {
       id: 'fake-id',
     };
 
     await expect(() => sut.execute(input)).rejects.toThrow(
-      new NotFoundError('Entity not found'),
+      new NotFoundError('Usuário não encontrado'),
     );
   });
 

@@ -1,16 +1,16 @@
-import { UserOutputDto, UserOutputMapper } from './dto/user-output.dto';
+import { UserOutputDto, UserOutputMapper } from '../dto/user-output.dto';
 
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
+import { UpdateUserValidator } from './validator/update-user.validator';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
 export class UpdateUser {
   constructor(readonly userRepository: UserRepositoryInterface) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    if (!input.id) {
-      throw new BadRequestError('ID do usuário precisa ser informado');
-    }
+    const fieldsValidation = new UpdateUserValidator();
+
+    fieldsValidation.validate(input);
 
     const userAlreadyExists = await this.userRepository.findByID(input.id);
 
