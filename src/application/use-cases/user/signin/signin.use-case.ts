@@ -20,7 +20,9 @@ export class Signin {
     const userExist = await this.userRepository.findByEmail(input.email);
 
     if (!userExist) {
-      throw new BadRequestError('Email ou senha inválidos');
+      throw new BadRequestError([
+        { property: 'email', message: 'Email ou senha inválidos' },
+      ]);
     }
 
     const hashPasswordMatches = await this.hashProvider.compareHash(
@@ -29,7 +31,9 @@ export class Signin {
     );
 
     if (!hashPasswordMatches) {
-      throw new BadRequestError('Email ou senha inválidos');
+      throw new BadRequestError([
+        { property: 'email', message: 'Email ou senha inválidos' },
+      ]);
     }
 
     const token = await this.jwtProvider.generateToken({
@@ -38,7 +42,7 @@ export class Signin {
     });
 
     return {
-      ...userExist.toJson(),
+      ...userExist.toJSON(),
       accessToken: token,
     };
   }

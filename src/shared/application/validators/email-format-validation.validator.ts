@@ -16,7 +16,9 @@ export class EmailFormatValidation implements ValidatorInterface<string> {
   validate(input: string): void {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(input)) {
-      throw new BadRequestError('Email inválido');
+      throw new BadRequestError([
+        { property: 'email', message: 'Email inválido' },
+      ]);
     }
   }
 }

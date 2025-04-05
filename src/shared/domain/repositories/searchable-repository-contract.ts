@@ -1,4 +1,6 @@
+import { BadRequestError } from '../errors/bad-request-error';
 import { Entity } from '../entities/entity';
+import { MetaInterface } from '../interfaces/meta.interface';
 import { RepositoryInterface } from './repository-contract';
 
 // Define os tipos permitidos para a direção de ordenação: ascendente ('asc') ou descendente ('desc').
@@ -8,7 +10,6 @@ export type SortDirection = 'asc' | 'desc';
 export type SearchProps<Filter = string> = {
   page?: number;
   perPage?: number;
-  lastPage?: number;
   sort?: string | null;
   sortDir?: SortDirection | null;
   filter?: Filter | null;
@@ -21,136 +22,135 @@ export type SearchResultProps<T extends Entity, Filter> = {
   currentPage: number;
   perPage: number;
   sort: string | null;
-  sortDir: string | null;
+  sortDir: SortDirection | null;
   filter: Filter | null;
 };
 
 // Classe responsável por encapsular os parâmetros de pesquisa e fornecer validação e comportamento padrão.
 export class SearchParams<Filter = string> {
-  protected _page: number;
-  protected _perPage = 15;
-  protected _sort: string | null;
-  protected _sortDir: SortDirection | null;
-  protected _filter: Filter | null;
+  private _page: number;
+  private _perPage: number;
+  private _sort: string | null;
+  private _sortDir: SortDirection | null;
+  private _filter: Filter | null;
 
   constructor(props: SearchProps<Filter> = {}) {
-    this.page = props.page;
-    this.perPage = props.perPage;
-    this.sort = props.sort;
-    this.sortDir = props.sortDir;
-    this.filter = props.filter;
+    this._page = this.normalizePage(props.page);
+    this._perPage = this.normalizePerPage(props.perPage);
+    this._sort = this.normalizeSort(props.sort);
+    this._sortDir = this.normalizeSortDir(props.sortDir);
+    this._filter = this.normalizeFilter(props.filter);
   }
 
-  // Getter para a página atual.
+  private normalizePage(value?: number): number {
+    if (value === undefined || value === null) return 1;
+
+    const page = Number(value);
+
+    return isNaN(page) || page <= 0 || !Number.isInteger(page) ? 1 : page;
+  }
+
+  private normalizePerPage(value?: number): number {
+    if (value === undefined || value === null) return 15;
+    const perPage = Number(value);
+    return isNaN(perPage) || perPage <= 0 || !Number.isInteger(perPage)
+      ? 15
+      : perPage;
+  }
+
+  private normalizeSort(value?: string | null): string | null {
+    if (value === null || value === undefined || value === '')
+      return 'createdAt';
+    return String(value).trim();
+  }
+
+  private normalizeSortDir(value?: SortDirection | null): SortDirection | null {
+    if (value === null || value === undefined) return 'desc';
+    return value.toLowerCase() === 'asc' ? 'asc' : 'desc';
+  }
+
+  private normalizeFilter(value?: Filter | null): Filter | null {
+    if (value === null || value === undefined || value === '') return null;
+    return value;
+  }
+
+  // Getters (mantidos iguais)
   get page() {
     return this._page;
   }
-
-  // Setter privado que valida e define a página atual.
-  // Garante que o valor seja um número válido e maior que 0.
-  private set page(value: number) {
-    let _page = +value;
-
-    if (Number.isNaN(_page) || _page <= 0 || parseInt(_page as any) !== _page) {
-      _page = 1;
-    }
-
-    this._page = _page;
-  }
-
-  // Getter para o número de itens por página.
   get perPage() {
     return this._perPage;
   }
-
-  // Setter privado que valida e define o número de itens por página.
-  private set perPage(value: number) {
-    let _perPage = value === (true as any) ? this._perPage : +value;
-
-    if (
-      Number.isNaN(_perPage) ||
-      _perPage <= 0 ||
-      parseInt(_perPage as any) !== _perPage
-    ) {
-      _perPage = this._perPage;
-    }
-
-    this._perPage = _perPage;
-  }
-
-  // Getter para o campo de ordenação.
   get sort() {
     return this._sort;
   }
-
-  // Setter privado que valida e define o campo de ordenação.
-  private set sort(value: string | null) {
-    this._sort =
-      value === null || value === undefined || value === '' ? null : `${value}`;
-  }
-
-  // Getter para a direção de ordenação.
   get sortDir() {
     return this._sortDir;
   }
-
-  // Setter privado que valida e define a direção de ordenação.
-  // Se não houver um campo de ordenação definido, a direção será nula.
-  private set sortDir(value: string | null) {
-    if (!this.sort) {
-      this._sortDir = null;
-      return;
-    }
-    const dir = `${value}`.toLowerCase();
-    this._sortDir = dir !== 'asc' && dir !== 'desc' ? 'desc' : dir;
-  }
-
-  // Getter para o filtro.
-  get filter(): Filter | null {
+  get filter() {
     return this._filter;
-  }
-
-  // Setter privado que valida e define o filtro.
-  private set filter(value: Filter | null) {
-    this._filter =
-      value === null || value === undefined || value === ''
-        ? null
-        : (`${value}` as any);
   }
 }
 
 export class SearchResult<T extends Entity, Filter = string> {
-  readonly items: T[];
-  readonly totalItems: number;
-  readonly currentPage: number;
-  readonly perPage: number;
-  readonly lastPage: number;
-  readonly sort: string | null;
-  readonly sortDir: string | null;
-  readonly filter: Filter | null;
+  private readonly _items: T[];
+  private readonly _totalItems: number;
+  private readonly _currentPage: number;
+  private readonly _perPage: number;
+  private readonly _totalPages: number;
+  private readonly _prevPage: number | null;
+  private readonly _nextPage: number | null;
+  private readonly _sort: string | null;
+  private readonly _sortDir: SortDirection | null;
+  private readonly _filter: Filter | null;
 
   constructor(props: SearchResultProps<T, Filter>) {
-    this.items = props.items;
-    this.totalItems = props.totalItems;
-    this.currentPage = props.currentPage;
-    this.perPage = props.perPage;
-    this.lastPage = Math.ceil(this.totalItems / this.perPage);
-    this.sort = props.sort ?? null;
-    this.sortDir = props.sortDir ?? null;
-    this.filter = props.filter ?? null;
+    this.validateSortDir(props.sortDir);
+
+    this._items = props.items;
+    this._totalItems = props.totalItems;
+    this._currentPage = props.currentPage;
+    this._perPage = props.perPage;
+
+    this._totalPages = Math.ceil(this._totalItems / this._perPage);
+    this._prevPage = this._currentPage > 1 ? this._currentPage - 1 : null;
+    this._nextPage =
+      this._currentPage < this._totalPages ? this._currentPage + 1 : null;
+
+    this._sort = props.sort ?? null;
+    this._sortDir = props.sortDir ?? null;
+    this._filter = props.filter ?? null;
   }
 
-  toJSON(forceEntity = false) {
+  get items(): T[] {
+    return this._items;
+  }
+
+  get meta(): MetaInterface {
     return {
-      items: forceEntity ? this.items.map((item) => item.toJson()) : this.items,
-      totalItems: this.totalItems,
-      currentPage: this.currentPage,
-      perPage: this.perPage,
-      lastPage: this.lastPage,
-      sort: this.sort,
-      sortDir: this.sortDir,
-      filter: this.filter,
+      pagination: {
+        totalItems: this._totalItems,
+        currentPage: this._currentPage,
+        perPage: this._perPage,
+        totalPages: this._totalPages,
+        prevPage: this._prevPage,
+        nextPage: this._nextPage,
+      },
+      sort: this._sort,
+      sortDir: this._sortDir as SortDirection,
+      filter: this._filter as string,
     };
+  }
+
+  private validateSortDir(dir: string | null): void | Error {
+    if (dir && !['asc', 'desc'].includes(dir)) {
+      throw new BadRequestError([
+        {
+          property: 'sortDir',
+          message: 'sortDir só pode ser "asc" ou "desc"',
+        },
+      ]);
+    }
   }
 }
 

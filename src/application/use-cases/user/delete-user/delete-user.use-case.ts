@@ -7,7 +7,9 @@ export class DeleteUser {
 
   async execute(input: DeleteUserInput): Promise<DeleteUserOutput> {
     if (!input.id) {
-      throw new BadRequestError('ID do usuário precisa ser informado');
+      throw new BadRequestError([
+        { property: 'id', message: 'ID do usuário precisa ser informado' },
+      ]);
     }
 
     const userAlreadyExists = await this.userRepository.findByID(input.id);

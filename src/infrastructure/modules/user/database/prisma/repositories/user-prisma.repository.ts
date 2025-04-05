@@ -4,6 +4,7 @@ import {
   UserSearchResults,
 } from '@src/domain/repositories/user.repository';
 
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
 import { SearchResult } from '@src/shared/domain/repositories/searchable-repository-contract';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
@@ -21,20 +22,20 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
    * @throws {NotFoundError} If the user is not found.
    */
   async findByEmail(email: string): Promise<UserEntity> {
-    try {
-      // Query the database to find a user by the given email
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          email,
-        },
-      });
+    // Query the database to find a user by the given email
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
-      // Map the retrieved user model to a UserEntity
-      return UserModelMapper.toEntity(user);
-    } catch {
-      // If the user is not found, return null
+    // If the user is not found, return null
+    if (!user) {
       return null;
     }
+
+    // Map the retrieved user model to a UserEntity
+    return UserModelMapper.toEntity(user);
   }
 
   /**
@@ -43,59 +44,64 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
    * @returns A promise that resolves to a SearchResult containing the search results.
    */
   async search(props: UserSearchParams): Promise<UserSearchResults> {
-    // Determine the sort order
-    const sortable = this.sortableFields?.includes(props.sort) || false;
-    const orderByField = sortable ? props.sort : 'createdAt';
-    const orderByDir = sortable ? props.sortDir : 'desc';
+    // console.log(props);
+    // Valores padrão
+    const page = props.page && props.page > 0 ? props.page : 1;
+    const perPage = props.perPage && props.perPage > 0 ? props.perPage : 15;
 
-    // Count the number of records that match the search criteria
-    const count = await this.prismaService.user.count({
-      ...(props.filter && {
-        // If a filter is provided, search for users with a name that contains the filter
-        where: {
-          name: {
-            contains: props.filter,
-            mode: 'insensitive',
-          },
-        },
+    // Construir o WHERE clause com tipagem correta
+    const where = props.filter
+      ? {
+          OR: [
+            {
+              name: {
+                contains: props.filter,
+                mode: 'insensitive' as const,
+              },
+            },
+            {
+              email: {
+                contains: props.filter,
+                mode: 'insensitive' as const,
+              },
+            },
+          ],
+        }
+      : {};
+
+    // Lógica de ordenação 100% funcional
+    const orderBy: Prisma.UserOrderByWithRelationInput = {};
+
+    if (props.sort && this.sortableFields.includes(props.sort)) {
+      const sortField = props.sort;
+      const sortOrder = props.sortDir === 'asc' ? 'asc' : 'desc';
+
+      // Atribuição dinâmica com notação de colchetes
+      orderBy[sortField as keyof Prisma.UserOrderByWithRelationInput] =
+        sortOrder;
+    } else {
+      // Ordenação padrão
+      orderBy.createdAt = 'desc';
+    }
+
+    // Consulta com ordenação garantida
+    const [totalItems, models] = await Promise.all([
+      this.prismaService.user.count({ where }),
+      this.prismaService.user.findMany({
+        where,
+        orderBy, // Agora garantido que funciona
+        skip: (page - 1) * perPage,
+        take: perPage,
       }),
-    });
+    ]);
 
-    // Retrieve the user models that match the search criteria
-    const models = this.prismaService.user.findMany({
-      ...(props.filter && {
-        // If a filter is provided, search for users with a name that contains the filter
-        where: {
-          name: {
-            contains: props.filter,
-            mode: 'insensitive',
-          },
-        },
-        // Sort the results by the specified field in the specified direction
-        orderBy: {
-          [orderByField]: orderByDir,
-        },
-        // Skip the first N records
-        skip:
-          props.page && props.page > 0 ? (props.page - 1) * props.perPage : 1,
-        // Take the next N records
-        take: props.perPage && props.perPage > 0 ? props.perPage : 15,
-      }),
-    });
-
-    // Map the retrieved user models to UserEntities
-    const items = (await models).map((model) =>
-      UserModelMapper.toEntity(model),
-    );
-
-    // Create a SearchResult containing the search results
     return new SearchResult({
-      items,
-      totalItems: count,
-      currentPage: props.page,
-      perPage: props.perPage,
-      sort: orderByField,
-      sortDir: orderByDir,
+      items: models.map(UserModelMapper.toEntity),
+      totalItems,
+      currentPage: page,
+      perPage,
+      sort: props.sort,
+      sortDir: props.sortDir || 'desc',
       filter: props.filter,
     });
   }
@@ -108,7 +114,7 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
   async insert(entity: UserEntity): Promise<void> {
     // Use the Prisma service to create a new user record in the database
     await this.prismaService.user.create({
-      data: entity.toJson(), // Convert the user entity to a JSON object for database insertion
+      data: entity.toJSON(), // Convert the user entity to a JSON object for database insertion
     });
   }
 
@@ -151,7 +157,7 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
       where: {
         id: user.id,
       },
-      data: entity.toJson(),
+      data: entity.toJSON(),
     });
   }
 

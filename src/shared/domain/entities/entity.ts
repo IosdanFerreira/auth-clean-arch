@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export abstract class Entity<Props = any> {
   // Identificador único da entidade
-  public readonly _id: string;
+  private readonly _id: string;
 
   // Propriedades da entidade, que são passadas no momento da criação
   public readonly props: Props;
@@ -40,7 +40,7 @@ export abstract class Entity<Props = any> {
    *
    * @returns Um objeto JSON representando a entidade, com um campo "id" obrigatório.
    */
-  toJson(): Required<{ id: string } & Props> {
+  toJSON(): Required<{ id: string } & Props> {
     return {
       id: this._id,
       ...this.props,

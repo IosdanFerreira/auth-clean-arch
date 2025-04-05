@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CollectionPresenter } from '@src/shared/infrastructure/presenters/collection.presenter';
-import { ListUsersOutput } from '@src/application/use-cases/user/list-users.use-case';
+import { BaseResponse } from '@src/shared/infrastructure/presenters/base-response.presenter';
+import { HttpStatus } from '@nestjs/common';
+import { MetaInterface } from '@src/shared/domain/interfaces/meta.interface';
+import { MetaPresenter } from '@src/shared/infrastructure/presenters/pagination.presenter';
 import { Transform } from 'class-transformer';
 import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
 
@@ -26,12 +28,13 @@ export class UserPresenter {
   }
 }
 
-export class UserCollectionPresenter extends CollectionPresenter {
-  data: UserPresenter[];
-
-  constructor(output: ListUsersOutput) {
-    const { items, ...paginationProps } = output;
-    super(paginationProps);
-    this.data = items.map((item) => new UserPresenter(item));
+export class UserCollectionPresenter {
+  static present(items: UserOutputDto[], meta: MetaInterface, message: string) {
+    return BaseResponse.success(
+      items.map((item) => new UserPresenter(item)),
+      HttpStatus.OK,
+      message,
+      new MetaPresenter(meta),
+    );
   }
 }

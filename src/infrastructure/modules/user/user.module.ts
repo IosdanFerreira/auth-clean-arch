@@ -7,12 +7,14 @@ import { DeleteUser } from '@src/application/use-cases/user/delete-user/delete-u
 import { GetUserByEmail } from '@src/application/use-cases/user/get-user-by-email/get-user-by-email.use-case';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
-import { ListUsers } from '@src/application/use-cases/user/list-users.use-case';
+import { ListUsers } from '@src/application/use-cases/user/list-user/list-users.use-case';
+import { PaginationMapperInterface } from '@src/shared/application/mappers/pagination-mapper.interface';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
 import { Signin } from '@src/application/use-cases/user/signin/signin.use-case';
 import { Signup } from '@src/application/use-cases/user/signup/signup.use-case';
-import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
-import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
+import { StandardPaginationMapper } from '@src/shared/application/mappers/standard-pagination.mapper';
+import { UpdatePassword } from '@src/application/use-cases/user/update-password/update-password.use-case';
+import { UpdateUser } from '@src/application/use-cases/user/update-user/update-user.use-case';
 import { UserController } from './user.controller';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 
@@ -23,6 +25,10 @@ import { UserRepositoryInterface } from '@src/domain/repositories/user.repositor
     {
       provide: 'PrismaService',
       useClass: PrismaService,
+    },
+    {
+      provide: 'PaginationMapperInterface',
+      useClass: StandardPaginationMapper,
     },
     {
       provide: 'UserRepository',
@@ -69,10 +75,13 @@ import { UserRepositoryInterface } from '@src/domain/repositories/user.repositor
     },
     {
       provide: ListUsers,
-      useFactory: (userRepository: UserRepositoryInterface) => {
-        return new ListUsers(userRepository);
+      useFactory: (
+        userRepository: UserRepositoryInterface,
+        paginationMapper: PaginationMapperInterface,
+      ) => {
+        return new ListUsers(userRepository, paginationMapper);
       },
-      inject: ['UserRepository'],
+      inject: ['UserRepository', 'PaginationMapperInterface'],
     },
     {
       provide: UpdateUser,

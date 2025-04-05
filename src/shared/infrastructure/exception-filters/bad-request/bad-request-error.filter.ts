@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { BaseResponse } from '../../presenters/base-response.presenter';
 import { Response } from 'express';
 
 @Catch(BadRequestError)
@@ -14,10 +15,15 @@ export class BadRequestErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    response.status(HttpStatus.BAD_REQUEST).send({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
-      message: exception.message,
-    });
+    response
+      .status(HttpStatus.BAD_REQUEST)
+      .send(
+        BaseResponse.error(
+          HttpStatus.BAD_REQUEST,
+          exception.name,
+          exception.errors,
+          exception.message,
+        ),
+      );
   }
 }

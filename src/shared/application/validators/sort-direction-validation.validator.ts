@@ -2,11 +2,23 @@ import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { ValidatorInterface } from './validator.interface';
 
 export class SortDirectionValidation implements ValidatorInterface<string> {
-  constructor(private readonly fieldName: string) {}
+  constructor(
+    private readonly fieldName: string,
+    private readonly isOptional: boolean = false,
+  ) {}
 
-  validate(value: string): void {
-    if (value !== 'asc' && value !== 'desc') {
-      throw new BadRequestError(`${this.fieldName} deve ser 'asc' ou 'desc'`);
+  validate(input: string): void {
+    if (this.isOptional && (input === null || input === undefined)) {
+      return;
+    }
+
+    if (input !== 'asc' && input !== 'desc') {
+      throw new BadRequestError([
+        {
+          property: this.fieldName,
+          message: `${this.fieldName} deve ser 'asc' ou 'desc'`,
+        },
+      ]);
     }
   }
 }

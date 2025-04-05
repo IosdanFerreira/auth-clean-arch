@@ -25,9 +25,13 @@ export class PasswordStrengthValidation implements ValidatorInterface<string> {
 
     // Test the password against the regex
     if (!passwordRegex.test(value)) {
-      throw new BadRequestError(
-        'Senha deve ter pelo menos 8 caracteres, incluindo maiúsculas, minúsculas, números e símbolos',
-      );
+      throw new BadRequestError([
+        {
+          property: 'password',
+          message:
+            'Senha deve ter pelo menos 8 caracteres, incluindo maiúsculas, minúsculas, números e símbolos',
+        },
+      ]);
     }
   }
 }

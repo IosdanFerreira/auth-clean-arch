@@ -13,18 +13,20 @@ import {
 import { SignupDto } from './dto/signup.dto';
 import { Signup } from '@src/application/use-cases/user/signup/signup.use-case';
 import { Signin } from '@src/application/use-cases/user/signin/signin.use-case';
-import { UpdateUser } from '@src/application/use-cases/user/update-user.use-case';
-import { UpdatePassword } from '@src/application/use-cases/user/update-password.use-case';
 import { DeleteUser } from '@src/application/use-cases/user/delete-user/delete-user.use-case';
 import { GetUserByEmail } from '@src/application/use-cases/user/get-user-by-email/get-user-by-email.use-case';
-import { ListUsers } from '@src/application/use-cases/user/list-users.use-case';
 import { SigninDto } from './dto/signin.dto';
-import { ListUsersDto } from './dto/list-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
-import { UserPresenter } from './presenters/user.presenter';
+import {
+  UserCollectionPresenter,
+  UserPresenter,
+} from './presenters/user.presenter';
 import { isPublic } from '@src/shared/infrastructure/decorators/is-public.decorator';
+import { UpdateUser } from '@src/application/use-cases/user/update-user/update-user.use-case';
+import { UpdatePassword } from '@src/application/use-cases/user/update-password/update-password.use-case';
+import { ListUsers } from '@src/application/use-cases/user/list-user/list-users.use-case';
 
 @Controller('users')
 export class UserController {
@@ -75,8 +77,14 @@ export class UserController {
   }
 
   @Get()
-  search(@Query() searchParams: ListUsersDto) {
-    return this.listUsersUseCase.execute(searchParams);
+  async search(@Query() searchParams: any) {
+    const output = await this.listUsersUseCase.execute(searchParams);
+
+    return UserCollectionPresenter.present(
+      output.items,
+      output.meta,
+      'Lista de usuários encontrada',
+    );
   }
 
   @Put()

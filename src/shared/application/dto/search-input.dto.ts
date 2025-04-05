@@ -1,6 +1,6 @@
 import { SortDirection } from '@src/shared/domain/repositories/searchable-repository-contract';
 
-export interface SearchInput<Filter = string> {
+export interface SearchInputDto<Filter = string> {
   page: number;
   perPage: number;
   sort: string | null;

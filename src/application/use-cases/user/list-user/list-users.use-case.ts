@@ -1,41 +1,39 @@
 import {
-  PaginationOutput,
-  PaginationOutputMapper,
-} from '@src/shared/application/dtos/pagination-output.dto';
-import { UserOutputDto, UserOutputMapper } from '../dto/user-output.dto';
-import {
   UserRepositoryInterface,
   UserSearchParams,
-  UserSearchResults,
 } from '@src/domain/repositories/user.repository';
 
 import { ListUsersValidator } from './validator/list-user.validator';
-import { SearchInput } from '@src/shared/application/dtos/search-input.dto';
+import { PaginationMapperInterface } from '@src/shared/application/mappers/pagination-mapper.interface';
+import { PaginationOutputDto } from '@src/shared/application/dto/pagination-output.dto';
+import { SearchInputDto } from '@src/shared/application/dto/search-input.dto';
+import { UserOutputDto } from '../dto/user-output.dto';
 
 export class ListUsers {
-  constructor(readonly userRepository: UserRepositoryInterface) {}
+  constructor(
+    readonly userRepository: UserRepositoryInterface,
+    private readonly paginationMapper: PaginationMapperInterface,
+  ) {}
 
   async execute(input: ListUsersInput): Promise<ListUsersOutput> {
     const validator = new ListUsersValidator();
 
     validator.validate(input as any);
 
-    const searchParams = new UserSearchParams(input);
+    const searchParams = new UserSearchParams({
+      page: input.page,
+      perPage: input.perPage,
+      sort: input.sort,
+      sortDir: input.sortDir,
+      filter: input.filter,
+    });
 
     const listedUsers = await this.userRepository.search(searchParams);
 
-    return this.toOutput(listedUsers);
-  }
-
-  private toOutput(searchResult: UserSearchResults): ListUsersOutput {
-    const items = searchResult.items.map((item) => {
-      return UserOutputMapper.toOutput(item);
-    });
-
-    return PaginationOutputMapper.toOutput(items, searchResult);
+    return this.paginationMapper.toOutput(listedUsers);
   }
 }
 
-export type ListUsersInput = SearchInput;
+export type ListUsersInput = SearchInputDto;
 
-export type ListUsersOutput = PaginationOutput<UserOutputDto>;
+export type ListUsersOutput = PaginationOutputDto<UserOutputDto>;

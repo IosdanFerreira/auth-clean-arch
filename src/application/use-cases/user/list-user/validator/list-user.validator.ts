@@ -1,12 +1,10 @@
 import {
   FieldValidation,
-  NumberTypeValidation,
   RequiredFieldValidation,
   SortDirectionValidation,
   StringTypeValidation,
 } from '@src/shared/application/validators';
 
-import { MinValueValidation } from '@src/shared/application/validators/min-value-validation.validator';
 import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class ListUsersValidator
@@ -18,26 +16,26 @@ export class ListUsersValidator
     this.validations = [
       // Validações do campo page
       new FieldValidation('page', [
-        new RequiredFieldValidation('Page'),
-        new NumberTypeValidation('Page'),
-        new MinValueValidation('Page', 1),
+        new RequiredFieldValidation('page'),
+        new StringTypeValidation('page'),
       ]),
 
       // Validações do campo perPage
       new FieldValidation('perPage', [
-        new RequiredFieldValidation('PerPage'),
-        new NumberTypeValidation('PerPage'),
-        new MinValueValidation('PerPage', 1),
+        new RequiredFieldValidation('perPage'),
+        new StringTypeValidation('perPage'),
       ]),
 
       // Validações do campo sort (opcional)
-      new FieldValidation('sort', [new StringTypeValidation('Sort')]),
+      new FieldValidation('sort', [new StringTypeValidation('sort', true)]),
 
       // Validações do campo sortDir (opcional)
-      new FieldValidation('sortDir', [new SortDirectionValidation('SortDir')]),
+      new FieldValidation('sortDir', [
+        new SortDirectionValidation('sortDir', true),
+      ]),
 
       // Validações do campo filter (opcional)
-      new FieldValidation('filter', [new StringTypeValidation('Filter')]),
+      new FieldValidation('filter', [new StringTypeValidation('filter', true)]),
     ];
   }
 

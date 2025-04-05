@@ -10,6 +10,6 @@ export interface UserOutputDto {
 
 export class UserOutputMapper {
   static toOutput(entity: UserEntity): UserOutputDto {
-    return entity.toJson();
+    return entity.toJSON();
   }
 }

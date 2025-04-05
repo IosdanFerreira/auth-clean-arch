@@ -9,13 +9,21 @@ export class MinValueValidation implements ValidatorInterface<number> {
 
   validate(value: number): void {
     if (typeof value !== 'number') {
-      throw new BadRequestError(`${this.fieldName} deve ser do tipo number`);
+      throw new BadRequestError([
+        {
+          property: this.fieldName,
+          message: `${this.fieldName} deve ser do tipo number`,
+        },
+      ]);
     }
 
     if (value < this.minValue) {
-      throw new BadRequestError(
-        `${this.fieldName} deve ser maior ou igual ${this.minValue}`,
-      );
+      throw new BadRequestError([
+        {
+          property: this.fieldName,
+          message: `${this.fieldName} deve ser maior ou igual ${this.minValue}`,
+        },
+      ]);
     }
   }
 }

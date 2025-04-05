@@ -29,7 +29,9 @@ export class UpdatePassword {
     );
 
     if (!checkOldPassword) {
-      throw new BadRequestError('Senha inválida');
+      throw new BadRequestError([
+        { property: 'password', message: 'Senha inválida' },
+      ]);
     }
 
     const newHashPassword = await this.hashProvider.generateHash(

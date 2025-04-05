@@ -17,7 +17,7 @@ export class GetUserByEmail {
       throw new NotFoundError('Usuário não encontrado');
     }
 
-    return user.toJson();
+    return user.toJSON();
   }
 }
 

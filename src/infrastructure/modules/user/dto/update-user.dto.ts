@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-import { UpdateUserInput } from '@src/application/use-cases/user/update-user.use-case';
+import { UpdateUserInput } from '@src/application/use-cases/user/update-user/update-user.use-case';
 
 export class UpdateUserDto implements Omit<UpdateUserInput, 'id'> {
   @IsString({ message: 'name deve ser do tipo string' })

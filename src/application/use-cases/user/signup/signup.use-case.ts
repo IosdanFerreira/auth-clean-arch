@@ -39,7 +39,7 @@ export class Signup {
 
     await this.userRepository.insert(user);
 
-    return user.toJson();
+    return user.toJSON();
   }
 }
 
