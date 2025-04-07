@@ -1,35 +1,39 @@
-import { Module, forwardRef } from '@nestjs/common';
+import {
+  GetUserByEmail,
+  GetUserByEmailInput,
+} from '@src/application/use-cases/user/get-user-by-email/get-user-by-email.use-case';
+import {
+  ListUsers,
+  ListUsersInput,
+} from '@src/application/use-cases/user/list-user/list-users.use-case';
+import {
+  UpdatePassword,
+  UpdatePasswordInput,
+} from '@src/application/use-cases/user/update-password/update-password.use-case';
+import {
+  UpdateUser,
+  UpdateUserInput,
+} from '@src/application/use-cases/user/update-user/update-user.use-case';
 
-import { AuthModule } from '../auth/auth.module';
 import { AuthRepositoryDatabase } from './database/prisma/repositories/user-prisma.repository';
-import { BcryptjsHashProvider } from '../../providers/hash-provider/bcryptjs-hash.provider';
 import { DeleteUser } from '@src/application/use-cases/user/delete-user/delete-user.use-case';
-import { GetUserByEmail } from '@src/application/use-cases/user/get-user-by-email/get-user-by-email.use-case';
+import { GetUserByEmailValidator } from '@src/application/use-cases/user/get-user-by-email/validator/get-user-by-email.validator';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
-import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
-import { ListUsers } from '@src/application/use-cases/user/list-user/list-users.use-case';
+import { ListUsersValidator } from '@src/application/use-cases/user/list-user/validator/list-user.validator';
+import { Module } from '@nestjs/common';
 import { PaginationMapperInterface } from '@src/shared/application/mappers/pagination-mapper.interface';
 import { PrismaService } from '@src/shared/infrastructure/database/prisma/prisma.service';
-import { Signin } from '@src/application/use-cases/user/signin/signin.use-case';
-import { Signup } from '@src/application/use-cases/user/signup/signup.use-case';
-import { StandardPaginationMapper } from '@src/shared/application/mappers/standard-pagination.mapper';
-import { UpdatePassword } from '@src/application/use-cases/user/update-password/update-password.use-case';
-import { UpdateUser } from '@src/application/use-cases/user/update-user/update-user.use-case';
+import { SharedModule } from '@src/shared/infrastructure/module/shared/shared.module';
+import { UpdatePasswordValidator } from '@src/application/use-cases/user/update-password/validator/update-password.validator';
+import { UpdateUserValidator } from '@src/application/use-cases/user/update-user/validator/update-user.validator';
 import { UserController } from './user.controller';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 @Module({
-  imports: [forwardRef(() => AuthModule)],
+  imports: [SharedModule],
   controllers: [UserController],
   providers: [
-    {
-      provide: 'PrismaService',
-      useClass: PrismaService,
-    },
-    {
-      provide: 'PaginationMapperInterface',
-      useClass: StandardPaginationMapper,
-    },
     {
       provide: 'UserRepository',
       useFactory: (prismaService: PrismaService) => {
@@ -37,68 +41,59 @@ import { UserRepositoryInterface } from '@src/domain/repositories/user.repositor
       },
       inject: ['PrismaService'],
     },
-    {
-      provide: 'HashProviderInterface',
-      useClass: BcryptjsHashProvider,
-    },
-    {
-      provide: Signup,
-      useFactory: (
-        userRepository: UserRepositoryInterface,
-        hashProvider: HashProviderInterface,
-      ) => {
-        return new Signup(userRepository, hashProvider);
-      },
-      inject: ['UserRepository', 'HashProviderInterface'],
-    },
-    {
-      provide: Signin,
-      useFactory: (
-        userRepository: UserRepositoryInterface,
-        hashProvider: HashProviderInterface,
-        jwtProvider: JwtProviderInterface,
-      ) => {
-        return new Signin(userRepository, hashProvider, jwtProvider);
-      },
-      inject: [
-        'UserRepository',
-        'HashProviderInterface',
-        'JwtProviderInterface',
-      ],
-    },
+    GetUserByEmailValidator,
     {
       provide: GetUserByEmail,
-      useFactory: (userRepository: UserRepositoryInterface) => {
-        return new GetUserByEmail(userRepository);
+      useFactory: (
+        userRepository: UserRepositoryInterface,
+        validator: ValidatorInterface<GetUserByEmailInput>,
+      ) => {
+        return new GetUserByEmail(userRepository, validator);
       },
-      inject: ['UserRepository'],
+      inject: ['UserRepository', GetUserByEmailValidator],
     },
+    ListUsersValidator,
     {
       provide: ListUsers,
       useFactory: (
         userRepository: UserRepositoryInterface,
         paginationMapper: PaginationMapperInterface,
+        validator: ValidatorInterface<ListUsersInput>,
       ) => {
-        return new ListUsers(userRepository, paginationMapper);
+        return new ListUsers(userRepository, paginationMapper, validator);
       },
-      inject: ['UserRepository', 'PaginationMapperInterface'],
+      inject: [
+        'UserRepository',
+        'PaginationMapperInterface',
+        ListUsersValidator,
+      ],
     },
+    UpdateUserValidator,
     {
       provide: UpdateUser,
-      useFactory: (userRepository: UserRepositoryInterface) => {
-        return new UpdateUser(userRepository);
+      useFactory: (
+        userRepository: UserRepositoryInterface,
+        validator: ValidatorInterface<UpdateUserInput>,
+      ) => {
+        return new UpdateUser(userRepository, validator);
       },
-      inject: ['UserRepository'],
+      inject: ['UserRepository', UpdateUserValidator],
     },
+    UpdatePasswordValidator,
     {
       provide: UpdatePassword,
       useFactory: (
         userRepository: UserRepositoryInterface,
         hashProvider: HashProviderInterface,
+        validator: ValidatorInterface<UpdatePasswordInput>,
       ) => {
-        return new UpdatePassword(userRepository, hashProvider);
+        return new UpdatePassword(userRepository, hashProvider, validator);
       },
-      inject: ['UserRepository', 'HashProviderInterface'],
+      inject: [
+        'UserRepository',
+        'HashProviderInterface',
+        UpdatePasswordValidator,
+      ],
     },
     {
       provide: DeleteUser,
@@ -108,5 +103,6 @@ import { UserRepositoryInterface } from '@src/domain/repositories/user.repositor
       inject: ['UserRepository'],
     },
   ],
+  exports: [SharedModule, 'UserRepository'],
 })
 export class UserModule {}

@@ -1,29 +1,31 @@
 import { ConflictError } from '@src/shared/domain/errors/conflict-error';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
-import { SignupValidator } from './validator/signup.validator';
 import { UserEntity } from '@src/domain/entities/user/user.entity';
-import { UserOutputDto } from '../dto/user-output.dto';
+import { UserOutputDto } from '../_dto/user-output.dto';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class Signup {
   constructor(
     readonly userRepository: UserRepositoryInterface,
     readonly hashProvider: HashProviderInterface,
+    private readonly validator: ValidatorInterface<SignupInput>,
   ) {}
 
   async execute(input: SignupInput): Promise<SignupOutput> {
-    const fieldsValidator = new SignupValidator();
-
-    fieldsValidator.validate(input);
+    this.validator.validate(input);
 
     const emailAlreadyExist = await this.userRepository.findByEmail(
       input.email,
     );
 
     if (emailAlreadyExist) {
-      throw new ConflictError(
-        'Já existe um usuario cadastrado com esse endereço de email',
-      );
+      throw new ConflictError('Erro ao cadastrar usuário', [
+        {
+          property: 'email',
+          message: 'Já existe um usuario cadastrado com esse endereço de email',
+        },
+      ]);
     }
 
     const hashedPassword = await this.hashProvider.generateHash(

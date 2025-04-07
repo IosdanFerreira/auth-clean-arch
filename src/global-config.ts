@@ -1,10 +1,10 @@
 import {
   ClassSerializerInterceptor,
-  HttpStatus,
   INestApplication,
   ValidationPipe,
 } from '@nestjs/common';
 
+import { BadRequestError } from './shared/domain/errors/bad-request-error';
 import { BadRequestErrorFilter } from './shared/infrastructure/exception-filters/bad-request/bad-request-error.filter';
 import { ConflictErrorFilter } from './shared/infrastructure/exception-filters/conflict-error/conflict-error.filter';
 import { InvalidCredentialsErrorFilter } from './shared/infrastructure/exception-filters/invalid-credentials-error/invalid-credentials-error.filter';
@@ -16,7 +16,17 @@ import { WrapperDataInterceptor } from './shared/infrastructure/interceptors/wra
 export function applyGlobalConfig(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
-      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      exceptionFactory: (errors) => {
+        const result = errors.map((error) => ({
+          property: error.property,
+          message: error.constraints[Object.keys(error.constraints)[0]],
+        }));
+
+        return new BadRequestError(
+          'Erro na validação dos parâmetros enviados',
+          [...result],
+        );
+      },
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,

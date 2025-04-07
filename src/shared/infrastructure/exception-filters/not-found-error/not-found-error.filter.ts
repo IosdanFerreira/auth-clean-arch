@@ -1,5 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 
+import { BaseResponse } from '../../presenters/base-response.presenter';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
 import { Response } from 'express';
 
@@ -9,10 +15,15 @@ export class NotFoundErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    response.status(404).send({
-      statusCode: 404,
-      error: 'Not Found',
-      message: exception.message,
-    });
+    response
+      .status(404)
+      .send(
+        BaseResponse.error(
+          HttpStatus.NOT_FOUND,
+          exception.name,
+          exception.errors,
+          exception.message,
+        ),
+      );
   }
 }

@@ -182,6 +182,10 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
    * @returns A promise that resolves to the UserEntity.
    */
   protected async _get(id: string): Promise<UserEntity> {
+    if (!this.isValidUUID(id)) {
+      return null;
+    }
+
     // Query the database to find a user by their unique ID
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -194,5 +198,11 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
     }
     // Map the retrieved user model to a UserEntity
     return UserModelMapper.toEntity(user);
+  }
+
+  private isValidUUID(uuid: string): boolean {
+    const regex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return regex.test(uuid);
   }
 }

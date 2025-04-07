@@ -1,20 +1,23 @@
-import { GetUserByEmailValidator } from './validator/get-user-by-email.validator';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
-import { UserOutputDto } from '../dto/user-output.dto';
+import { UserOutputDto } from '../_dto/user-output.dto';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class GetUserByEmail {
-  constructor(readonly userRepository: UserRepositoryInterface) {}
+  constructor(
+    private readonly userRepository: UserRepositoryInterface,
+    private readonly validator: ValidatorInterface<GetUserByEmailInput>,
+  ) {}
 
   async execute(email: string): Promise<GetUserByEmailOutput> {
-    const fieldsValidation = new GetUserByEmailValidator();
-
-    fieldsValidation.validate({ email });
+    this.validator.validate({ email });
 
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new NotFoundError('Usuário não encontrado');
+      throw new NotFoundError('Erro ao encontrar usuário', [
+        { property: 'email', message: 'Usuário nao encontrado' },
+      ]);
     }
 
     return user.toJSON();

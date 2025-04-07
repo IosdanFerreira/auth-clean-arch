@@ -144,7 +144,7 @@ export class SearchResult<T extends Entity, Filter = string> {
 
   private validateSortDir(dir: string | null): void | Error {
     if (dir && !['asc', 'desc'].includes(dir)) {
-      throw new BadRequestError([
+      throw new BadRequestError('Erro na direção de ordenação', [
         {
           property: 'sortDir',
           message: 'sortDir só pode ser "asc" ou "desc"',

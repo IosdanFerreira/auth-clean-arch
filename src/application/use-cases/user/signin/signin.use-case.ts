@@ -1,26 +1,25 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
-import { BcryptjsHashProvider } from '@src/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
+import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
-import { SigninValidator } from './validator/signin.validator';
-import { UserOutputDto } from '../dto/user-output.dto';
+import { UserOutputDto } from '../_dto/user-output.dto';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class Signin {
   constructor(
     readonly userRepository: UserRepositoryInterface,
-    readonly hashProvider: BcryptjsHashProvider,
+    readonly hashProvider: HashProviderInterface,
     private readonly jwtProvider: JwtProviderInterface,
+    private readonly validator: ValidatorInterface<SigninInput>,
   ) {}
 
   async execute(input: SigninInput): Promise<SigninOutput> {
-    const fieldsValidation = new SigninValidator();
-
-    fieldsValidation.validate(input);
+    this.validator.validate(input);
 
     const userExist = await this.userRepository.findByEmail(input.email);
 
     if (!userExist) {
-      throw new BadRequestError([
+      throw new BadRequestError('Erro ao logar na conta do usuário', [
         { property: 'email', message: 'Email ou senha inválidos' },
       ]);
     }
@@ -31,7 +30,7 @@ export class Signin {
     );
 
     if (!hashPasswordMatches) {
-      throw new BadRequestError([
+      throw new BadRequestError('Erro ao logar na conta do usuário', [
         { property: 'email', message: 'Email ou senha inválidos' },
       ]);
     }

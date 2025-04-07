@@ -13,7 +13,7 @@ export class NumberTypeValidation implements ValidatorInterface<string> {
   validate(input: string): void {
     if (typeof input !== 'number') {
       // Lança um erro se o input fornecido não for um número
-      throw new BadRequestError([
+      throw new BadRequestError('', [
         {
           property: this.fieldName,
           message: `${this.fieldName} deve ser do tipo number`,

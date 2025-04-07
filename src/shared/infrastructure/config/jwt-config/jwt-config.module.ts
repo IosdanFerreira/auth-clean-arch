@@ -1,19 +1,20 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-
+import { EnvConfigModule } from '../env-config/env-config.module';
+import { EnvironmentConfigInterface } from '../env-config/env-config.interface';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtProvider } from '@src/infrastructure/providers/jwt-provider/jwt.provider';
-// src/infrastructure/config/jwt/jwt-config.module.ts
 import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1d' },
+      imports: [EnvConfigModule],
+      useFactory: async (envConfig: EnvironmentConfigInterface) => ({
+        secret: envConfig.getJwtSecret(),
+        signOptions: {
+          expiresIn: envConfig.getJwtInLiteralStringValue(),
+        },
       }),
-      inject: [ConfigService],
+      inject: ['EnvironmentConfigInterface'],
     }),
   ],
   providers: [

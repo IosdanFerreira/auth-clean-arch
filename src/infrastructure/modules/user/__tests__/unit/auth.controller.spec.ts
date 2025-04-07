@@ -7,7 +7,7 @@ import { UpdatePasswordDto } from '../../dto/update-password.dto';
 import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UpdateUserOutput } from '@src/application/use-cases/user/update-user.use-case';
 import { UserController } from '../../user.controller';
-import { UserOutputDto } from '@src/application/use-cases/user/dto/user-output.dto';
+import { UserOutputDto } from '@src/application/use-cases/user/_dto/user-output.dto';
 import { UserPresenter } from '../../presenters/user.presenter';
 import { updatePasswordOutput } from '@src/application/use-cases/user/update-password.use-case';
 

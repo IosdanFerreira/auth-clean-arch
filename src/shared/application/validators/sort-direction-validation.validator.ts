@@ -13,7 +13,7 @@ export class SortDirectionValidation implements ValidatorInterface<string> {
     }
 
     if (input !== 'asc' && input !== 'desc') {
-      throw new BadRequestError([
+      throw new BadRequestError('', [
         {
           property: this.fieldName,
           message: `${this.fieldName} deve ser 'asc' ou 'desc'`,

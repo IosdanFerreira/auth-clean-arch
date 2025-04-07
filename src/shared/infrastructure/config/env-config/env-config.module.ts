@@ -6,8 +6,13 @@ import { join } from 'node:path';
 
 @Module({
   imports: [ConfigModule],
-  providers: [EnvConfigService],
-  exports: [EnvConfigService],
+  providers: [
+    {
+      provide: 'EnvironmentConfigInterface',
+      useClass: EnvConfigService,
+    },
+  ],
+  exports: ['EnvironmentConfigInterface'],
 })
 export class EnvConfigModule extends ConfigModule {
   static forRoot(options: ConfigModuleOptions = {}): Promise<DynamicModule> {

@@ -25,7 +25,7 @@ export class PasswordStrengthValidation implements ValidatorInterface<string> {
 
     // Test the password against the regex
     if (!passwordRegex.test(value)) {
-      throw new BadRequestError([
+      throw new BadRequestError('', [
         {
           property: 'password',
           message:

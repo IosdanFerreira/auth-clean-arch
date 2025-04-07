@@ -3,22 +3,21 @@ import {
   UserSearchParams,
 } from '@src/domain/repositories/user.repository';
 
-import { ListUsersValidator } from './validator/list-user.validator';
 import { PaginationMapperInterface } from '@src/shared/application/mappers/pagination-mapper.interface';
 import { PaginationOutputDto } from '@src/shared/application/dto/pagination-output.dto';
 import { SearchInputDto } from '@src/shared/application/dto/search-input.dto';
-import { UserOutputDto } from '../dto/user-output.dto';
+import { UserOutputDto } from '../_dto/user-output.dto';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class ListUsers {
   constructor(
     readonly userRepository: UserRepositoryInterface,
     private readonly paginationMapper: PaginationMapperInterface,
+    private readonly validator: ValidatorInterface<ListUsersInput>,
   ) {}
 
   async execute(input: ListUsersInput): Promise<ListUsersOutput> {
-    const validator = new ListUsersValidator();
-
-    validator.validate(input as any);
+    this.validator.validate(input);
 
     const searchParams = new UserSearchParams({
       page: input.page,

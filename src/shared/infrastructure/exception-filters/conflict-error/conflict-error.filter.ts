@@ -1,5 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 
+import { BaseResponse } from '../../presenters/base-response.presenter';
 import { ConflictError } from '@src/shared/domain/errors/conflict-error';
 import { Response } from 'express';
 
@@ -9,10 +15,15 @@ export class ConflictErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    response.status(409).send({
-      statusCode: 409,
-      error: 'Conflict',
-      message: exception.message,
-    });
+    response
+      .status(409)
+      .send(
+        BaseResponse.error(
+          HttpStatus.CONFLICT,
+          exception.name,
+          exception.errors,
+          exception.message,
+        ),
+      );
   }
 }

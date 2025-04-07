@@ -1,26 +1,26 @@
-import { UserOutputDto, UserOutputMapper } from '../dto/user-output.dto';
-
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { NotFoundError } from '@src/shared/domain/errors/not-found-error';
-import { UpdatePasswordValidator } from './validator/update-password.validator';
+import { UserOutputDto } from '../_dto/user-output.dto';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
+import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 export class UpdatePassword {
   constructor(
-    private userRepository: UserRepositoryInterface,
-    private hashProvider: HashProviderInterface,
+    private readonly userRepository: UserRepositoryInterface,
+    private readonly hashProvider: HashProviderInterface,
+    private readonly validator: ValidatorInterface<UpdatePasswordInput>,
   ) {}
 
   async execute(input: UpdatePasswordInput): Promise<UpdatePasswordOutput> {
-    const validator = new UpdatePasswordValidator();
-
-    validator.validate(input);
+    this.validator.validate(input);
 
     const userExist = await this.userRepository.findByID(input.id);
 
     if (!userExist) {
-      throw new NotFoundError('Usuário não encontrado');
+      throw new NotFoundError('Erro ao atualizar senha', [
+        { property: 'id', message: 'Usuário nao encontrado' },
+      ]);
     }
 
     const checkOldPassword = await this.hashProvider.compareHash(
@@ -29,7 +29,7 @@ export class UpdatePassword {
     );
 
     if (!checkOldPassword) {
-      throw new BadRequestError([
+      throw new BadRequestError('Erro ao atualizar senha', [
         { property: 'password', message: 'Senha inválida' },
       ]);
     }
@@ -43,7 +43,7 @@ export class UpdatePassword {
 
     await this.userRepository.update(input.id, userExist);
 
-    return UserOutputMapper.toOutput(userExist);
+    return userExist.toJSON();
   }
 }
 

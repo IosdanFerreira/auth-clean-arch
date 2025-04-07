@@ -14,7 +14,7 @@ export class RequiredFieldValidation implements ValidatorInterface<any> {
     // Verifica se o valor do campo está vazio ou indefinido
     if (!input) {
       // Lança um erro indicando que o campo não pode ser vazio
-      throw new BadRequestError([
+      throw new BadRequestError('', [
         {
           property: this.fieldName,
           message: `${this.fieldName} não pode ser vazio`,

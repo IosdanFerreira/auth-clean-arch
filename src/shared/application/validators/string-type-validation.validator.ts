@@ -20,7 +20,7 @@ export class StringTypeValidation implements ValidatorInterface<string> {
 
     if (typeof input !== 'string') {
       // Lança um erro se o input fornecido não for uma string
-      throw new BadRequestError([
+      throw new BadRequestError('', [
         {
           property: this.fieldName,
           message: `${this.fieldName} deve ser uma string`,
