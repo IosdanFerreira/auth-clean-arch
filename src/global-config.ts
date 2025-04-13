@@ -11,6 +11,7 @@ import { InvalidCredentialsErrorFilter } from './shared/infrastructure/exception
 import { InvalidPasswordErrorFilter } from './shared/infrastructure/exception-filters/invalid-password-error/invalid-password-error.filter';
 import { NotFoundErrorFilter } from './shared/infrastructure/exception-filters/not-found-error/not-found-error.filter';
 import { Reflector } from '@nestjs/core';
+import { UnauthorizedErrorFilter } from './shared/infrastructure/exception-filters/unauthorized-error/unauthorized-error.filter';
 import { WrapperDataInterceptor } from './shared/infrastructure/interceptors/wrapper-data/wrapper-data.interceptor';
 
 export function applyGlobalConfig(app: INestApplication) {
@@ -44,5 +45,6 @@ export function applyGlobalConfig(app: INestApplication) {
     new InvalidPasswordErrorFilter(),
     new InvalidCredentialsErrorFilter(),
     new BadRequestErrorFilter(),
+    new UnauthorizedErrorFilter(),
   );
 }

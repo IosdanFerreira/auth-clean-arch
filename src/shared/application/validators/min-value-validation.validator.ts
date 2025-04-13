@@ -7,7 +7,14 @@ export class MinValueValidation implements ValidatorInterface<number> {
     private readonly minValue: number,
   ) {}
 
+  /**
+   * Valida o valor mínimo do campo.
+   *
+   * @param value - O valor a ser validado.
+   * @throws BadRequestError - Se o valor for menor que o valor mínimo.
+   */
   validate(value: number): void {
+    // Verifica se o valor e um n mero
     if (typeof value !== 'number') {
       throw new BadRequestError('', [
         {
@@ -17,6 +24,7 @@ export class MinValueValidation implements ValidatorInterface<number> {
       ]);
     }
 
+    // Verifica se o valor é menor que o valor mínimo
     if (value < this.minValue) {
       throw new BadRequestError('', [
         {

@@ -16,36 +16,35 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
   /**
-   * Retrieves a user entity by its email address.
-   * @param email - The email address to search for.
-   * @returns A promise that resolves to the UserEntity.
-   * @throws {NotFoundError} If the user is not found.
+   * Recupera um usuário pelo seu endereço de email.
+   * @param email - O endereço de email a ser pesquisado.
+   * @returns Uma promessa que resolve para a entidade de usuário.
+   * @throws {NotFoundError} Se o usuário não for encontrado.
    */
   async findByEmail(email: string): Promise<UserEntity> {
-    // Query the database to find a user by the given email
+    // Consulta o banco de dados para encontrar um usuário pelo endereço de email
     const user = await this.prismaService.user.findUnique({
       where: {
         email,
       },
     });
 
-    // If the user is not found, return null
+    // Se o usuário não for encontrado, retorna null
     if (!user) {
       return null;
     }
 
-    // Map the retrieved user model to a UserEntity
+    // Mapeia o modelo de usuário recuperado para uma entidade de usuário
     return UserModelMapper.toEntity(user);
   }
 
   /**
-   * Retrieves a list of user entities that match the given search criteria.
-   * @param props - The search criteria.
-   * @returns A promise that resolves to a SearchResult containing the search results.
+   * Recupera uma lista de usuários que atendem aos critérios de busca.
+   * @param props - Os critérios de busca.
+   * @returns Uma promessa que resolve para um SearchResult contendo os resultados da busca.
    */
   async search(props: UserSearchParams): Promise<UserSearchResults> {
-    // console.log(props);
-    // Valores padrão
+    // Valores padr o
     const page = props.page && props.page > 0 ? props.page : 1;
     const perPage = props.perPage && props.perPage > 0 ? props.perPage : 15;
 
@@ -69,22 +68,22 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
         }
       : {};
 
-    // Lógica de ordenação 100% funcional
+    // L gica de ordena o 100% funcional
     const orderBy: Prisma.UserOrderByWithRelationInput = {};
 
     if (props.sort && this.sortableFields.includes(props.sort)) {
       const sortField = props.sort;
       const sortOrder = props.sortDir === 'asc' ? 'asc' : 'desc';
 
-      // Atribuição dinâmica com notação de colchetes
+      // Atribui o din mica com notacao de colchetes
       orderBy[sortField as keyof Prisma.UserOrderByWithRelationInput] =
         sortOrder;
     } else {
-      // Ordenação padrão
+      // Ordena o padr o
       orderBy.createdAt = 'desc';
     }
 
-    // Consulta com ordenação garantida
+    // Consulta com ordena o garantida
     const [totalItems, models] = await Promise.all([
       this.prismaService.user.count({ where }),
       this.prismaService.user.findMany({
@@ -107,52 +106,52 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
   }
 
   /**
-   * Inserts a new user entity into the database.
-   * @param entity - The user entity to be inserted.
-   * @returns A promise that resolves when the insertion is complete.
+   * Insere um novo de usuário no banco de dados.
+   * @param entity - A entidade de usuário a ser inserida.
+   * @returns Uma promessa que resolve quando a inserção estiver completa.
    */
   async insert(entity: UserEntity): Promise<void> {
-    // Use the Prisma service to create a new user record in the database
+    // Registra o novo de usuário no banco de dados
     await this.prismaService.user.create({
-      data: entity.toJSON(), // Convert the user entity to a JSON object for database insertion
+      data: entity.toJSON(), // Converta a entidade de usuário para um objeto JSON para inserção no banco de dados
     });
   }
 
   /**
-   * Retrieves all user entities from the database.
-   * @returns A promise that resolves to an array of UserEntity.
+   * Recupera todos os usuário do banco de dados.
+   * @returns Uma promessa que resolve para uma lista de UserEntity.
    */
   async findAll(): Promise<UserEntity[]> {
-    // Retrieve all user entities from the database
+    // Recupera todos os usuário do banco de dados
     const users = await this.prismaService.user.findMany();
 
-    // Map the retrieved user models to UserEntity
+    // Mapeia os modelos de usuário recuperados para UserEntity
     return users.map((user) => UserModelMapper.toEntity(user));
   }
 
   /**
-   * Retrieves a user entity from the database by its unique identifier.
-   * @param id - The unique identifier of the user.
-   * @returns A promise that resolves to the UserEntity.
+   * Recupera um usuário pelo seu ID.
+   * @param id - O ID do usuário.
+   * @returns Uma promessa que resolve para a entidade de Usuário.
    */
   async findByID(id: string): Promise<UserEntity> {
-    // Retrieve the user entity from the database
+    // Recupera o usuário do banco de dados
     const user = await this._get(id);
 
-    // Return the user entity
+    // Retorna o usuário
     return user;
   }
 
   /**
-   * Updates a user entity in the database.
-   * @param id - The unique identifier of the user.
-   * @param entity - The updated user entity.
+   * Atualiza um usuário no banco de dados.
+   * @param id - O ID do usuário.
+   * @param entity - A entidade de Usuário atualizada.
    */
   async update(id: string, entity: UserEntity): Promise<void> {
-    // Retrieve the user entity from the database
+    // Recupera a entidade de Usuário do banco de dados
     const user = await this._get(id);
 
-    // Update the user entity in the database
+    // Atualiza o usuário no banco de dados
     await this.prismaService.user.update({
       where: {
         id: user.id,
@@ -162,13 +161,13 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
   }
 
   /**
-   * Deletes a user entity from the database.
-   * @param id - The unique identifier of the user.
+   * Remove uma entidade de usuário do banco de dados.
+   * @param id - O ID do usuário.
    */
   async delete(id: string): Promise<void> {
     const user = await this._get(id);
 
-    // Remove the user from the database
+    // Remove o usuário do banco de dados
     await this.prismaService.user.delete({
       where: {
         id: user.id,
@@ -177,16 +176,16 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
   }
 
   /**
-   * Retrieves a user entity by its unique ID.
-   * @param id - The unique identifier of the user.
-   * @returns A promise that resolves to the UserEntity.
+   * Recupera uma entidade de usuário pelo seu ID
+   * @param id - O ID do usuário.
+   * @returns Uma promessa que resolve para a entidade de usuário.
    */
   protected async _get(id: string): Promise<UserEntity> {
     if (!this.isValidUUID(id)) {
       return null;
     }
 
-    // Query the database to find a user by their unique ID
+    // Consulta o banco de dados para encontrar um usuário pelo seu ID
     const user = await this.prismaService.user.findUnique({
       where: {
         id,
@@ -196,7 +195,7 @@ export class AuthRepositoryDatabase implements UserRepositoryInterface {
     if (!user) {
       return null;
     }
-    // Map the retrieved user model to a UserEntity
+    // Mapeia o modelo de usuário recuperado para uma entidade de usuário
     return UserModelMapper.toEntity(user);
   }
 

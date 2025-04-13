@@ -1,37 +1,31 @@
 import {
   Signin,
   SigninInput,
-} from '@src/application/use-cases/user/signin/signin.use-case';
+} from '@src/application/use-cases/auth/signin/signin.use-case';
 import {
   Signup,
   SignupInput,
-} from '@src/application/use-cases/user/signup/signup.use-case';
+} from '@src/application/use-cases/auth/signup/signup.use-case';
 
 import { AuthController } from './auth.controller';
+import { EnvConfigModule } from '@src/shared/infrastructure/config/env-config/env-config.module';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { JwtConfigModule } from '@src/shared/infrastructure/config/jwt-config/jwt-config.module';
-import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
-import { JwtStrategy } from '@src/shared/infrastructure/strategies/jwt.strategy';
-// src/infrastructure/modules/auth/auth.module.ts
+import { JwtTokenFactoryInterface } from '@src/application/factories/jwt-token/interfaces/jwt-token.factory.interface';
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
+import { RefreshTokenUseCase } from '@src/application/use-cases/auth/refresh-token/refresh-token.use-case';
 import { SharedModule } from '@src/shared/infrastructure/module/shared/shared.module';
-import { SigninValidator } from '@src/application/use-cases/user/signin/validator/signin.validator';
-import { SignupValidator } from '@src/application/use-cases/user/signup/validator/signup.validator';
+import { SigninValidator } from '@src/application/use-cases/auth/signin/validator/signin.validator';
+import { SignupValidator } from '@src/application/use-cases/auth/signup/validator/signup.validator';
 import { UserModule } from '../user/user.module';
 import { UserRepositoryInterface } from '@src/domain/repositories/user.repository';
 import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 
 @Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    SharedModule,
-    UserModule,
-    JwtConfigModule,
-  ],
+  imports: [SharedModule, UserModule, JwtConfigModule, EnvConfigModule],
   controllers: [AuthController],
   providers: [
-    JwtStrategy,
+    // Signup
     SignupValidator,
     {
       provide: Signup,
@@ -44,25 +38,41 @@ import { ValidatorInterface } from '@src/shared/application/validators/validator
       },
       inject: ['UserRepository', 'HashProviderInterface', SignupValidator],
     },
+
+    // Signin
     SigninValidator,
     {
       provide: Signin,
       useFactory: (
         userRepository: UserRepositoryInterface,
         hashProvider: HashProviderInterface,
-        jwtProvider: JwtProviderInterface,
+        jwtTokenFactory: JwtTokenFactoryInterface,
         validator: ValidatorInterface<SigninInput>,
       ) => {
-        return new Signin(userRepository, hashProvider, jwtProvider, validator);
+        return new Signin(
+          userRepository,
+          hashProvider,
+          jwtTokenFactory,
+          validator,
+        );
       },
       inject: [
         'UserRepository',
         'HashProviderInterface',
-        'JwtProviderInterface',
+        'JwtTokenFactoryInterface',
         SigninValidator,
       ],
     },
+
+    // Refresh Token
+    {
+      provide: RefreshTokenUseCase,
+      useFactory: (tokenFactory: JwtTokenFactoryInterface) => {
+        return new RefreshTokenUseCase(tokenFactory);
+      },
+      inject: ['JwtTokenFactoryInterface'],
+    },
   ],
-  exports: [PassportModule, JwtConfigModule],
+  exports: [JwtConfigModule],
 })
 export class AuthModule {}

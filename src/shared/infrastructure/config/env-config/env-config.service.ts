@@ -19,7 +19,7 @@ export class EnvConfigService implements EnvironmentConfigInterface {
   }
 
   getJwtExpiresInSeconds(): number {
-    return this.configService.get<number>('JWT_EXPIRES_IN_SECONDS');
+    return Number(this.configService.get<number>('JWT_EXPIRES_IN_SECONDS'));
   }
 
   getJwtInLiteralStringValue(): string {
@@ -33,7 +33,9 @@ export class EnvConfigService implements EnvironmentConfigInterface {
   }
 
   getJwtRefreshExpiresInSeconds(): number {
-    return this.configService.get<number>('REFRESH_JWT_EXPIRES_IN_SECONDS');
+    return Number(
+      this.configService.get<number>('REFRESH_JWT_EXPIRES_IN_SECONDS'),
+    );
   }
 
   getJwtRefreshInLiteralStringValue(): string {

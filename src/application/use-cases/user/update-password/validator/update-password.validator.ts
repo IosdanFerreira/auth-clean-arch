@@ -4,7 +4,7 @@ import {
   StringTypeValidation,
 } from '@src/shared/application/validators';
 
-import { PasswordStrengthValidation } from '../../signup/validator/signup.validator';
+import { PasswordStrengthValidation } from '@src/application/use-cases/auth/signup/validator/signup.validator';
 import { UpdatePasswordInput } from '../update-password.use-case';
 import { ValidatorInterface } from '@src/shared/application/validators/validator.interface';
 

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseResponse } from '@src/shared/infrastructure/presenters/base-response.presenter';
+import { JwtTokenInterface } from '@src/application/factories/jwt-token/interfaces/jwt-token.interface';
 import { MetaInterface } from '@src/shared/domain/interfaces/meta.interface';
 import { MetaPresenter } from '@src/shared/infrastructure/presenters/pagination.presenter';
 import { Transform } from 'class-transformer';
@@ -16,24 +17,71 @@ export class UserPresenter {
   email: string;
 
   @ApiProperty({ description: 'Token de acesso' })
-  accessToken?: string | null;
+  accessToken?: JwtTokenInterface | null;
+
+  @ApiProperty({ description: 'Token de atualização do token de acesso' })
+  refreshToken?: JwtTokenInterface | null;
 
   @ApiProperty({ description: 'Data de criação do usuário' })
   @Transform(({ value }: { value: Date }) => value.toISOString())
   createdAt: Date;
 
+  /**
+   * Construtor da classe UserPresenter.
+   * @param userDto Dados do usuário obtidos da camada de negócios.
+   */
   constructor(userDto: UserOutputDto) {
+    /**
+     * Identificação do usuário.
+     */
     this.id = userDto.id;
+
+    /**
+     * Nome do usuário.
+     */
     this.name = userDto.name;
+
+    /**
+     * E-mail do usuário.
+     */
     this.email = userDto.email;
+
+    /**
+     * Data de criação do usuário.
+     */
     this.createdAt = userDto.createdAt;
 
+    /**
+     * Token de acesso.
+     * Caso o token de acesso seja nulo, o valor da propriedade accessToken
+     * será nulo.
+     */
     if (userDto.accessToken) {
       this.accessToken = userDto.accessToken ?? null;
     }
+
+    /**
+     * Token de atualização do token de acesso.
+     * Caso o token de atualização seja nulo, o valor da propriedade refreshToken
+     * será nulo.
+     */
+    if (userDto.refreshToken) {
+      this.refreshToken = userDto.refreshToken ?? null;
+    }
   }
 
+  /**
+   * Construtor da classe UserPresenter.
+   * @param userDto Dados do usuário obtidos da camada de negócios.
+   */
   static present(userDto: UserOutputDto, statusCode: number, message: string) {
+    /**
+     * Retorna uma resposta HTTP com dados do usuário.
+     * @param userDto Dados do usuário obtidos da camada de negócios.
+     * @param statusCode Código de status HTTP.
+     * @param message Mensagem de sucesso.
+     * @returns Uma resposta HTTP com dados do usuário.
+     */
     return BaseResponse.success(
       new UserPresenter(userDto),
       statusCode,
@@ -43,6 +91,14 @@ export class UserPresenter {
 }
 
 export class UserCollectionPresenter {
+  /**
+   * Retorna uma resposta HTTP com dados de usuários.
+   * @param items Dados dos usuários obtidos da camada de negócios.
+   * @param statusCode Código de status HTTP.
+   * @param meta Dados de paginação.
+   * @param message Mensagem de sucesso.
+   * @returns Uma resposta HTTP com dados de usuários.
+   */
   static present(
     items: UserOutputDto[],
     statusCode: number,
