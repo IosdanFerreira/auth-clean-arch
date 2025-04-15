@@ -1,85 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJs Boilerplate - Clean Architecture
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Descrição
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este é um boilerplate completo para iniciar novos projetos com **NestJS** com **Prisma**, já configurado com as melhores práticas de arquitetura e segurança. Ideal para começar um projeto rápido sem abrir mão de qualidade e escalabilidade.
 
-## Description
+## Principais Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Arquitetura baseada em **Clean Architecture** e princípios **SOLID**
 
-## Project setup
+- **Autenticação** com JWT (incluindo refresh tokens e cache com Redis)
+- **Cache de tokens** via **Redis**
+- Criptografia de senhas com **bcrypt**
+- Ambiente completo com **Docker** e **Docker compose**
+- Testes com **Jest** já configurado
+- **Prisma ORM** configurado com geração automática de tipos
+- Proteção de rotas e fluxo completo de autenticação
+- Configuração avançada com `@nestjs/config` para variáveis de ambiente
 
-```bash
-$ yarn install
-```
+## Tecnologias Utilizadas
 
-## Compile and run the project
+- [Node.js](https://nodejs.org/)
+- [Typescript](https://www.typescriptlang.org/)
+- [NestJS](https://nestjs.com/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs)
+- [class-validator](https://github.com/typestack/class-validator)
+- [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
+- [dotenv](https://github.com/motdotla/dotenv)
+- [Swagger](https://swagger.io/)
+- [eslint](https://eslint.org/)
+- [prettier](https://prettier.io/)
+- [Jest](https://jestjs.io/)
+- [Redis](https://redis.io/pt/)
 
-```bash
-# development
-$ yarn run start
+## Pré-requisitos
 
-# watch mode
-$ yarn run start:dev
+- [Node.js](https://nodejs.org/) (>= 16.0)
+- [npm](https://www.npmjs.com/) (>= 8.0) or [Yarn](https://yarnpkg.com/) (>= 1.22)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
 
-# production mode
-$ yarn run start:prod
-```
+## Instruções de Instalação
 
-## Run tests
+1.  **Clone o repositório:**
 
-```bash
-# unit tests
-$ yarn run test
+    ```bash
+    git clone https://github.com/IosdanFerreira/nestjs-boilerplate.git
+    cd nestjs-boilerplate
+    ```
 
-# e2e tests
-$ yarn run test:e2e
+2.  **Configurar variáveis de ambiente:**
 
-# test coverage
-$ yarn run test:cov
-```
+    - Crie um arquivo `.env` na pasta root do repositório.
+    - Adicione as seguintes variáveis, ajustando os valores conforme sua configuração local:
 
-## Resources
+    ```env
+    ENV=development
+    APP_PORT=3001
+    DATABASE_URL="postgresql://postgres:clean-arch-secret@db:5432/clean-arch?schema=public"
+    JWT_SECRET="jwt_secret"
+    JWT_EXPIRES_IN_SECONDS=3600
+    JWT_EXPIRES_IN_LITERAL_STRING_VALUE='1h'
+    REFRESH_JWT_SECRET="refresh_jwt_secret"
+    REFRESH_JWT_EXPIRES_IN_SECONDS=604800
+    REFRESH_JWT_EXPIRES_IN_LITERAL_STRING_VALUE='7d'
+    REDIS_HOST='redis'
+    REDIS_PORT=6379
+    ```
 
-Check out a few resources that may come in handy when working with NestJS:
+3.  **Conceda as permissões:**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+    ```bash
+    chmod +x .docker/entrypoint.sh
+    ```
 
-## Support
+4.  **Rode os comando docker:**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    Construa a build
 
-## Stay in touch
+    ```bash
+    docker compose build
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+    #Ou caso queira limpar o cache
 
-## License
+    docker compose build --no-cache
+    ```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+    suba o container
+
+    ```bash
+    docker compose up
+    ```
+
+## Guia de uso
+
+1.  **Acesse a aplicação:**
+
+    Abra seu navegador e acesse `http://localhost:3001`.
+
+2.  **Acesse a documentação do Swagger:**
+
+    Navegue até `http://localhost:3001/api` para interagir com a documentação da API.
+
+3.  **Autenticação:**
+
+    - Utilize o endpoint `/auth/login` para autenticar-se e obter um access token e um refresh token. Forneça as credenciais (e-mail e senha) de um usuário previamente cadastrado.
+    - O access token deve ser incluído no cabeçalho `Authorization` das requisições subsequentes a rotas protegidas, no formato `Bearer <token>`.
+    - Para renovar o access token, utilize o endpoint `/auth/refresh` enviando um refresh token válido.
