@@ -27,6 +27,14 @@ export class BaseResponse<T> {
     Object.assign(this, partial);
   }
 
+  /**
+   * Método estático para criar uma resposta de sucesso.
+   * @param data - Dados a serem retornados na resposta.
+   * @param status - Código de status HTTP.
+   * @param message - Mensagem de sucesso.
+   * @param meta - Dados de paginação, ordenação ou qualquer metadado adicional.
+   * @returns Uma instância de BaseResponse representando uma resposta de sucesso.
+   */
   static success<T>(
     data: T,
     status: number,
@@ -44,6 +52,14 @@ export class BaseResponse<T> {
     });
   }
 
+  /**
+   * Método estático para criar uma resposta de erro.
+   * @param status - Código de status HTTP.
+   * @param errorType - Tipo de erro ocorrido.
+   * @param errors - Lista de erros detalhados, cada um com propriedade e mensagem.
+   * @param message - Mensagem geral do erro.
+   * @returns Uma instância de BaseResponse representando uma resposta de erro.
+   */
   static error(
     status: number,
     errorType: string,

@@ -65,19 +65,3 @@ export class MetaPresenter<Filter = string> {
     this.filter = props.filter;
   }
 }
-
-// export class CollectionPresenter {
-//   @ApiProperty({ type: PaginationPresenter })
-//   meta: PaginationPresenter;
-
-//   constructor(props: {
-//     totalItems: number;
-//     currentPage: number;
-//     perPage: number;
-//     totalPages: number;
-//     prevPage: number | null;
-//     nextPage: number | null;
-//   }) {
-//     this.meta = new PaginationPresenter(props);
-//   }
-// }

@@ -1,8 +1,13 @@
+import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { CacheTokenRepositoryInterface } from '@src/application/interfaces/cache-token.repository.interface';
 import { JwtTokenFactoryInterface } from '../../../factories/jwt-token/interfaces/jwt-token.factory.interface';
 import { JwtTokenInterface } from '../../../factories/jwt-token/interfaces/jwt-token.interface';
 
 export class RefreshTokenUseCase {
-  constructor(private readonly tokenFactory: JwtTokenFactoryInterface) {}
+  constructor(
+    private readonly tokenFactory: JwtTokenFactoryInterface,
+    private readonly tokenRepository: CacheTokenRepositoryInterface,
+  ) {}
 
   /**
    * Executa o processo de renovação do token de acesso.
@@ -11,8 +16,23 @@ export class RefreshTokenUseCase {
    * @throws Lança um erro se o payload do token for inválido.
    */
   async execute(input: RefreshTokenInput): Promise<RefreshTokenOutput> {
+    // 1. Verifica se o refresh token está no Redis
+
     // Verifica se o token de refresh é válido
     const payload = await this.tokenFactory.verifyToken(input.refreshToken);
+
+    // Verifica se o token de refresh está armazenado no cache do Redis
+    const storedToken = await this.tokenRepository.getRefreshToken(
+      payload.sub,
+      input.refreshToken,
+    );
+
+    // Lança um erro se o token de refresh não for encontrado no cache
+    if (!storedToken) {
+      throw new BadRequestError('Refresh token inválido ou expirado', [
+        { property: 'refreshToken', message: 'Refresh token inválido' },
+      ]);
+    }
 
     // Gera um novo token de acesso com base no ID do usuário e email
     const accessToken = await this.tokenFactory.generateAccessToken(

@@ -32,6 +32,7 @@ import jwtRefreshConfig from './jwt-refresh.config';
       ): JwtProviderInterface => {
         return new JwtProvider(jwtService, envConfig);
       },
+      inject: [JwtService, 'EnvironmentConfigInterface'],
     },
     {
       provide: 'JwtTokenFactoryInterface',

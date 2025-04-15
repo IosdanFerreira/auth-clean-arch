@@ -7,4 +7,6 @@ export interface EnvironmentConfigInterface {
   getJwtRefreshSecret(): string;
   getJwtRefreshExpiresInSeconds(): number;
   getJwtRefreshInLiteralStringValue(): string;
+  getRedisHost(): string;
+  getRedisPort(): number;
 }

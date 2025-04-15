@@ -1,4 +1,5 @@
 import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { CacheTokenRepositoryInterface } from '@src/application/interfaces/cache-token.repository.interface';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { JwtTokenFactoryInterface } from '../../../factories/jwt-token/interfaces/jwt-token.factory.interface';
 import { JwtTokenInterface } from '../../../factories/jwt-token/interfaces/jwt-token.interface';
@@ -19,6 +20,7 @@ export class Signin {
     readonly hashProvider: HashProviderInterface,
     private readonly jwtTokenFactory: JwtTokenFactoryInterface,
     private readonly validator: ValidatorInterface<SigninInput>,
+    private readonly tokenRepository: CacheTokenRepositoryInterface,
   ) {}
 
   /**
@@ -64,6 +66,12 @@ export class Signin {
     const refreshToken = await this.jwtTokenFactory.generateRefreshToken(
       userExist.id,
       userExist.email,
+    );
+
+    await this.tokenRepository.saveRefreshToken(
+      userExist.id,
+      refreshToken.token,
+      refreshToken.expiresIn,
     );
 
     // Retorna os dados do usuário juntamente com os tokens gerados

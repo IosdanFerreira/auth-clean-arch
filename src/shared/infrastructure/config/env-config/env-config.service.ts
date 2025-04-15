@@ -43,4 +43,12 @@ export class EnvConfigService implements EnvironmentConfigInterface {
       'REFRESH_JWT_EXPIRES_IN_LITERAL_STRING_VALUE',
     );
   }
+
+  getRedisHost(): string {
+    return this.configService.get<string>('REDIS_HOST');
+  }
+
+  getRedisPort(): number {
+    return this.configService.get<number>('REDIS_PORT');
+  }
 }

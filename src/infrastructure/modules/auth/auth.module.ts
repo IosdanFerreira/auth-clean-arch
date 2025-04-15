@@ -8,11 +8,14 @@ import {
 } from '@src/application/use-cases/auth/signup/signup.use-case';
 
 import { AuthController } from './auth.controller';
+import { CacheTokenRepositoryInterface } from '@src/application/interfaces/cache-token.repository.interface';
 import { EnvConfigModule } from '@src/shared/infrastructure/config/env-config/env-config.module';
+import { EnvironmentConfigInterface } from '@src/shared/infrastructure/config/env-config/env-config.interface';
 import { HashProviderInterface } from '@src/shared/application/providers/hash-provider.interface';
 import { JwtConfigModule } from '@src/shared/infrastructure/config/jwt-config/jwt-config.module';
 import { JwtTokenFactoryInterface } from '@src/application/factories/jwt-token/interfaces/jwt-token.factory.interface';
 import { Module } from '@nestjs/common';
+import { RedisTokenRepository } from './persistence/redis/redis-token.repository';
 import { RefreshTokenUseCase } from '@src/application/use-cases/auth/refresh-token/refresh-token.use-case';
 import { SharedModule } from '@src/shared/infrastructure/module/shared/shared.module';
 import { SigninValidator } from '@src/application/use-cases/auth/signin/validator/signin.validator';
@@ -48,12 +51,14 @@ import { ValidatorInterface } from '@src/shared/application/validators/validator
         hashProvider: HashProviderInterface,
         jwtTokenFactory: JwtTokenFactoryInterface,
         validator: ValidatorInterface<SigninInput>,
+        tokenRepository: CacheTokenRepositoryInterface,
       ) => {
         return new Signin(
           userRepository,
           hashProvider,
           jwtTokenFactory,
           validator,
+          tokenRepository,
         );
       },
       inject: [
@@ -61,16 +66,27 @@ import { ValidatorInterface } from '@src/shared/application/validators/validator
         'HashProviderInterface',
         'JwtTokenFactoryInterface',
         SigninValidator,
+        'CacheTokenRepositoryInterface',
       ],
     },
 
     // Refresh Token
     {
-      provide: RefreshTokenUseCase,
-      useFactory: (tokenFactory: JwtTokenFactoryInterface) => {
-        return new RefreshTokenUseCase(tokenFactory);
+      provide: 'CacheTokenRepositoryInterface',
+      useFactory: (envConfig: EnvironmentConfigInterface) => {
+        return new RedisTokenRepository(envConfig);
       },
-      inject: ['JwtTokenFactoryInterface'],
+      inject: ['EnvironmentConfigInterface'],
+    },
+    {
+      provide: RefreshTokenUseCase,
+      useFactory: (
+        tokenFactory: JwtTokenFactoryInterface,
+        tokenRepository: CacheTokenRepositoryInterface,
+      ) => {
+        return new RefreshTokenUseCase(tokenFactory, tokenRepository);
+      },
+      inject: ['JwtTokenFactoryInterface', 'CacheTokenRepositoryInterface'],
     },
   ],
   exports: [JwtConfigModule],

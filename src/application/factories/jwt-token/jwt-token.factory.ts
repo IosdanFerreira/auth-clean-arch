@@ -1,3 +1,4 @@
+import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
 import { EnvironmentConfigInterface } from '@src/shared/infrastructure/config/env-config/env-config.interface';
 import { JwtProviderInterface } from '@src/shared/application/providers/jwt-provider.interface';
 import { JwtTokenFactoryInterface } from './interfaces/jwt-token.factory.interface';
@@ -92,7 +93,9 @@ export class JwtTokenFactory implements JwtTokenFactoryInterface {
 
     // Verifica se o payload possui o tipo 'refresh'
     if (payload.type !== 'refresh') {
-      throw new Error('Token is not a refresh token');
+      throw new BadRequestError('Token is not a refresh token', [
+        { property: 'token', message: 'Token não é um refresh token' },
+      ]);
     }
 
     // Retorna o payload decodificado
