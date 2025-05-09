@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SortDirection } from '@src/shared/domain/repositories/searchable-repository-contract';
+import { SortDirection } from '@src/shared/domain/types';
 
 export class PaginationPresenter {
   @ApiProperty({ description: 'Total de itens' })

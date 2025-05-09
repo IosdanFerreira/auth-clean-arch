@@ -1,5 +1,5 @@
-import { PaginationInterface } from './pagination.interface';
-import { SortDirection } from '../repositories/searchable-repository-contract';
+import { PaginationInterface } from '../../application/interfaces/pagination.interface';
+import { SortDirection } from '@src/shared/domain/types';
 
 export interface MetaInterface<Filter = string> {
   pagination: PaginationInterface;

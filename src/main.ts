@@ -8,9 +8,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Node.js Course')
+    .setTitle('NestJS Boilerplate')
     .setDescription(
-      'Node.js Rest API - NestJs, Typescript, DDD, Clean Architecture and Automated Tests',
+      'Uma estrutura pronta para desenvolvimento de APIs REST em Node.js, utilizando NestJS com TypeScript. Segue os princípios de DDD (Domain-Driven Design), Clean Architecture e inclui testes automatizados para garantir qualidade e escalabilidade',
     )
     .setVersion('1.0.0')
     .addBearerAuth({
@@ -27,6 +27,7 @@ async function bootstrap() {
 
   applyGlobalConfig(app);
 
-  await app.listen(3000, '0.0.0.0');
+  await app.listen(3001, '0.0.0.0');
 }
+
 bootstrap();

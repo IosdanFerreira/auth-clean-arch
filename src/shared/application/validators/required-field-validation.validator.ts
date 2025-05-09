@@ -1,4 +1,4 @@
-import { BadRequestError } from '@src/shared/domain/errors/bad-request-error';
+import { BadRequestError } from '@src/shared/domain/errors';
 import { ValidatorInterface } from './validator.interface';
 
 export class RequiredFieldValidation implements ValidatorInterface<any> {

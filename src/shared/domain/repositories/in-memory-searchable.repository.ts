@@ -1,11 +1,8 @@
-import {
-  SearchParams,
-  SearchResult,
-  SearchableRepositoryInterface,
-} from './searchable-repository-contract';
+import { SearchParams, SearchResult } from '../utils';
 
-import { Entity } from '../entities/entity';
+import { Entity } from '../entities/Entity';
 import { InMemoryRepository } from './in-memory.repository';
+import { SearchableRepositoryInterface } from '../interfaces';
 
 export abstract class InMemorySearchableRepository<T extends Entity>
   extends InMemoryRepository<T>
@@ -108,7 +105,7 @@ export abstract class InMemorySearchableRepository<T extends Entity>
     page: SearchParams['page'],
     perPage: SearchParams['perPage'],
   ): Promise<T[]> {
-    // C lculo do início da página
+    // Cálculo do início da página
     const start = (page - 1) * perPage;
 
     // Cálculo do fim da página

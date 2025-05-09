@@ -1,10 +1,10 @@
-import { Entity } from '../entities/entity';
-import { RepositoryInterface } from './repository-contract';
+import { Entity } from '../entities/Entity';
+import { RepositoryContractInterface } from '../interfaces';
 
 // Define uma classe abstrata que implementa um repositório em memória para armazenar entidades.
 // Essa implementação é útil para testes na aplicação
 export abstract class InMemoryRepository<T extends Entity>
-  implements RepositoryInterface<T>
+  implements RepositoryContractInterface<T>
 {
   // Armazena as entidades em um array na memória.
   items: T[] = [];

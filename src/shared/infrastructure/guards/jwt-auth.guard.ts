@@ -3,7 +3,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/is-public.decorator';
 import { Observable } from 'rxjs';
-import { Reflector } from '@nestjs/core'; // Usado para acessar metadados dos decoradores
+import { Reflector } from '@nestjs/core';
 import { UnauthorizedError } from '@src/shared/domain/errors/unauthorized.error';
 
 @Injectable()

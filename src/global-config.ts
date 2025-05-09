@@ -4,15 +4,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { BadRequestError } from './shared/domain/errors/bad-request-error';
-import { BadRequestErrorFilter } from './shared/infrastructure/exception-filters/bad-request/bad-request-error.filter';
-import { ConflictErrorFilter } from './shared/infrastructure/exception-filters/conflict-error/conflict-error.filter';
-import { InvalidCredentialsErrorFilter } from './shared/infrastructure/exception-filters/invalid-credentials-error/invalid-credentials-error.filter';
-import { InvalidPasswordErrorFilter } from './shared/infrastructure/exception-filters/invalid-password-error/invalid-password-error.filter';
-import { NotFoundErrorFilter } from './shared/infrastructure/exception-filters/not-found-error/not-found-error.filter';
+import { BadRequestError } from './shared/domain/errors';
+import { BadRequestErrorFilter } from './shared/infrastructure/exception-filters/bad-request-error.filter';
+import { ConflictErrorFilter } from './shared/infrastructure/exception-filters/conflict-error.filter';
+import { NotFoundErrorFilter } from './shared/infrastructure/exception-filters/not-found-error.filter';
 import { Reflector } from '@nestjs/core';
-import { UnauthorizedErrorFilter } from './shared/infrastructure/exception-filters/unauthorized-error/unauthorized-error.filter';
-import { WrapperDataInterceptor } from './shared/infrastructure/interceptors/wrapper-data/wrapper-data.interceptor';
+import { UnauthorizedErrorFilter } from './shared/infrastructure/exception-filters/unauthorized-error.filter';
+import { WrapperDataInterceptor } from './shared/infrastructure/interceptors/wrapper-data.interceptor';
 
 export function applyGlobalConfig(app: INestApplication) {
   app.useGlobalPipes(
@@ -42,8 +40,6 @@ export function applyGlobalConfig(app: INestApplication) {
   app.useGlobalFilters(
     new ConflictErrorFilter(),
     new NotFoundErrorFilter(),
-    new InvalidPasswordErrorFilter(),
-    new InvalidCredentialsErrorFilter(),
     new BadRequestErrorFilter(),
     new UnauthorizedErrorFilter(),
   );
